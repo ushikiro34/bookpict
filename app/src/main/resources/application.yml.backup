@@ -1,0 +1,67 @@
+spring:
+  application:
+    name: edu-bookpict
+  
+  # H2 Database (개발용)
+  datasource:
+    url: jdbc:h2:mem:bookpict
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+    
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+    
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+    
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+
+# Server Configuration
+server:
+  port: 8080
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+# Logging
+logging:
+  level:
+    edu.bookpict: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+# Crawler Configuration
+crawler:
+  enabled: false
+  schedule:
+    daily-init: "0 0 2 * * ?"
+    main-crawl: "0 0 */6 * * ?"
+  timeout:
+    connect: 10000
+    read: 30000
+  retry:
+    max-attempts: 3
+    delay: 5000
+# Aladin API Configuration
+aladin:
+  api:
+    key: "ttbushikiro0222001" # Aladin TTBKey
+    base-url: "http://www.aladin.co.kr/ttb/api"

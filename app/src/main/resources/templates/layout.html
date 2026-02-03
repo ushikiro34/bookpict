@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${title} ?: '교육 참고서 비교'">교육 참고서 비교</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#6a8571",
+                        "accent-orange": "#fb923c",
+                        "olive-cobalt-light": "#f8faf8",
+                        "olive-cobalt-muted": "#8ca391",
+                        "olive-cobalt-dark": "#4a5d4e",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+
+    <style type="text/tailwindcss">
+        :root {
+            --primary-mix: #6a8571;
+            --soft-mix: #f2f5f2;
+            --accent-orange: #fb923c;
+            --bg-neutral: #fafbf9;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-neutral);
+            font-size: 18.66px;
+        }
+        details > summary::-webkit-details-marker {
+            display: none;
+        }
+        .text-xs { font-size: 0.95rem; }
+        .text-sm { font-size: 1.05rem; }
+        .text-base { font-size: 1.2rem; }
+        .text-lg { font-size: 1.35rem; }
+    </style>
+
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body class="bg-[var(--bg-neutral)] font-display text-olive-cobalt-dark">
+    <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden pb-32">
+        <!-- Header -->
+        <div
+            class="flex items-center bg-white/80 backdrop-blur-md p-4 sticky top-0 z-20 justify-between border-b border-olive-cobalt-muted/10">
+            <div class="text-primary flex size-10 shrink-0 items-center justify-start">
+                <span class="material-symbols-outlined">menu</span>
+            </div>
+            <h2 class="text-primary text-lg font-bold leading-tight tracking-tight flex-1 text-center">교육 참고서 비교</h2>
+            <div class="size-10 flex items-center justify-end text-primary">
+                <span class="material-symbols-outlined">shopping_cart</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div layout:fragment="content">
+            <!-- Content will be inserted here -->
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div
+            class="fixed bottom-0 w-full bg-white/90 backdrop-blur-xl border-t border-olive-cobalt-muted/10 px-8 py-3 pb-8 flex justify-between items-center z-30">
+            <div class="flex flex-col items-center gap-1 text-olive-cobalt-muted/60">
+                <span class="material-symbols-outlined text-[24px]">home</span>
+                <span class="text-[10px] font-semibold uppercase tracking-wider">Home</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 text-primary">
+                <span class="material-symbols-outlined text-[24px]"
+                    style="font-variation-settings: 'FILL' 1">explore</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider">Browse</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 text-olive-cobalt-muted/60">
+                <span class="material-symbols-outlined text-[24px]">local_library</span>
+                <span class="text-[10px] font-semibold uppercase tracking-wider">Library</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 text-olive-cobalt-muted/60">
+                <span class="material-symbols-outlined text-[24px]">person</span>
+                <span class="text-[10px] font-semibold uppercase tracking-wider">Account</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script th:src="@{/js/ui/tab.js}"></script>
+    <script th:src="@{/js/ui/accordion.js}"></script>
+    <script th:src="@{/js/api.js}"></script>
+</body>
+
+</html>

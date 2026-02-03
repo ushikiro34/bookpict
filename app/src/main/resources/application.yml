@@ -1,0 +1,69 @@
+spring:
+  application:
+    name: bookpict
+  web:
+    resources:
+      content-types:
+        css: text/css
+
+  # H2 데이터베이스 - 파일 기반 (재시작 시에도 데이터 유지)
+  datasource:
+    url: jdbc:h2:file:./data/bookpict;AUTO_SERVER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: ${H2_CONSOLE_ENABLED:true}
+      path: /h2-console
+      # Note: H2 console is disabled by default. Set environment variable H2_CONSOLE_ENABLED=true for local dev only.
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+
+  session:
+    store-type: none
+    timeout: 30m
+
+# 알라딘 API 설정
+aladin:
+  api:
+    key: ${ALADIN_API_KEY:ttbushikiro0222001}
+    base-url: http://www.aladin.co.kr/ttb/api
+
+# 로깅 설정
+logging:
+  level:
+    root: INFO
+    edu.bookpict: DEBUG
+    edu.bookpict.aladin.scheduler: INFO
+    edu.bookpict.aladin.service: INFO
+    org.hibernate.SQL: WARN
+    org.springframework.web: INFO
+    org.springframework.scheduling: INFO
+
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# 서버 설정
+server:
+  address: 0.0.0.0
+  port: 8080
+  error:
+    include-message: always
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+
+# 스케줄러 설정
+spring.task.scheduling:
+  pool:
+    size: 2
+  thread-name-prefix: scheduler-

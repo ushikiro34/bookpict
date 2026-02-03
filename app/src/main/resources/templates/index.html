@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>참고서 비교검색</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#6A8571",
+                        "accent-orange": "#fb923c",
+                        "olive-cobalt-light": "#f8faf8",
+                        "olive-cobalt-muted": "#8ca391",
+                        "olive-cobalt-dark": "#3d4940",
+                        "olive-teal-active": "#6A8571",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+
+    <style type="text/tailwindcss">
+        :root {
+            --primary-mix: #6A8571;
+            --soft-mix: #f2f5f2;
+            --accent-orange: #fb923c;
+            --bg-neutral: #fafbf9;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-neutral);
+            font-size: 18.66px;
+        }
+        .text-xs { font-size: 0.95rem; }
+        .text-sm { font-size: 1.05rem; }
+        .text-base { font-size: 1.2rem; }
+        .text-lg { font-size: 1.35rem; }
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        #book-modal-overlay {
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+        #book-modal {
+            width: 80%;
+            height: 64%;
+            max-width: 80%;
+        }
+        
+        /* Tab Slider Animation */
+        .tab-slider-container {
+            display: flex;
+            width: 200%;
+            transition: transform 0.3s ease-in-out;
+        }
+        .tab-content-pane {
+            width: 50%;
+            flex-shrink: 0;
+        }
+        
+        #history-list {
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+        #history-list table {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        #history-tbody {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        #history-tbody tr {
+            display: flex;
+            width: 100%;
+        }
+        #history-tbody tr.empty-row {
+            flex: 1;
+            align-items: center;
+            justify-content: center;
+        }
+        #history-tbody td {
+            flex: 1;
+        }
+        #history-tbody td.delete-cell {
+            flex: 0 0 auto;
+        }
+        #search-loading .animate-spin {
+            border-width: 3px;
+        }
+    </style>
+</head>
+
+<body class="bg-[var(--bg-neutral)] font-display text-olive-cobalt-dark">
+    <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden pb-32">
+        <!-- Header -->
+        <div
+            class="flex items-center bg-white/80 backdrop-blur-md p-4 sticky top-0 z-20 justify-between border-b border-olive-cobalt-muted/10">
+            <div class="size-10 flex items-center justify-start text-primary cursor-pointer" onclick="openHelpModal()">
+                <span class="material-symbols-outlined">help</span>
+            </div>
+            <h2
+                class="text-primary text-xl font-black leading-tight tracking-tighter flex-1 text-center font-outfit uppercase">
+                BOOKPICT
+            </h2>
+            <div class="size-10 flex items-center justify-end text-primary cursor-pointer"
+                onclick="resetAllAndReload()">
+                <span class="material-symbols-outlined">refresh</span>
+            </div>
+        </div>
+
+        <!-- Search Area (Sticky) -->
+        <div class="px-4 pt-4 pb-2 space-y-4 sticky top-[73px] z-10 bg-[var(--bg-neutral)]">
+
+            <div class="relative">
+                <form th:action="@{/search}" method="get">
+                    <label class="flex flex-col w-full">
+                        <div
+                            class="flex w-full items-stretch rounded-xl h-12 shadow-sm border border-olive-cobalt-muted/20 bg-white overflow-hidden">
+                            <div class="text-primary flex items-center justify-center pl-4">
+                                <span class="material-symbols-outlined text-xl">search</span>
+                            </div>
+                            <input name="q"
+                                class="form-input flex w-full flex-1 border-none bg-white focus:ring-0 text-olive-cobalt-dark placeholder:text-slate-400 px-3 text-sm"
+                                placeholder="검색어를 입력하세요." th:value="${keyword}" />
+                            <div class="text-olive-cobalt-muted flex items-center justify-center pr-4">
+                                <span class="material-symbols-outlined text-xl cursor-pointer hover:text-primary"
+                                    onclick="clearSearch()">close</span>
+                            </div>
+                        </div>
+                    </label>
+                </form>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex p-1 bg-olive-cobalt-muted/10 rounded-xl border border-olive-cobalt-muted/5">
+                <button id="tab-btn-books" class="flex-1 py-1.5 text-sm font-bold rounded-lg transition-all"
+                    th:classappend="${activeTab == 'books'} ? 'bg-primary text-white shadow-md border border-white/10' : 'text-olive-cobalt-muted'"
+                    onclick="switchTab('books')">
+                    참고서 목록
+                </button>
+                <button id="tab-btn-history" class="flex-1 py-1.5 text-sm font-semibold rounded-lg transition-all"
+                    th:classappend="${activeTab == 'history'} ? 'bg-olive-teal-active text-white shadow-sm' : 'text-olive-cobalt-muted'"
+                    onclick="switchTab('history')">
+                    검색 이력
+                </button>
+            </div>
+
+            <!-- Filters: 4-column grid with grade + semester -->
+            <p id="filter-guide" class="text-[11px] text-olive-cobalt-muted/70 text-center"
+                th:style="${activeTab == 'books'} ? 'margin-bottom:-12px;' : 'display:none;margin-bottom:-12px;'">
+                * 과목, 학교, 학년, 학기를 선택하면 조회됩니다.
+            </p>
+            <div id="filter-container" class="grid grid-cols-4 gap-2 pt-2"
+                th:style="${activeTab == 'books'} ? 'display:grid' : 'display:none'">
+                <div class="relative">
+                    <select id="filter-subject" onchange="applyFilters()"
+                        class="form-select w-full rounded-xl border-olive-cobalt-muted/20 bg-white text-xs font-bold text-primary focus:border-primary focus:ring-primary shadow-sm h-11 px-2">
+                        <option value="">전체과목</option>
+                        <option value="국어">국어</option>
+                        <option value="영어">영어</option>
+                        <option value="수학">수학</option>
+                        <option value="한국사">한국사</option>
+                        <option value="세계사">세계사</option>
+                    </select>
+                </div>
+                <div class="relative">
+                    <select id="filter-level" onchange="updateGradeOptions()"
+                        class="form-select w-full rounded-xl border-olive-cobalt-muted/20 bg-white text-xs font-bold text-primary focus:border-primary focus:ring-primary shadow-sm h-11 px-2">
+                        <option value="">전체학교</option>
+                        <option value="초등">초등</option>
+                        <option value="중등">중등</option>
+                        <option value="고등">고등</option>
+                    </select>
+                </div>
+                <div class="relative">
+                    <select id="filter-grade" onchange="applyFilters()" disabled
+                        class="form-select w-full rounded-xl border-olive-cobalt-muted/20 bg-white text-xs font-bold text-primary focus:border-primary focus:ring-primary shadow-sm h-11 px-2 disabled:bg-gray-100 disabled:text-gray-400">
+                        <option value="">학년선택</option>
+                    </select>
+                </div>
+                <div class="relative">
+                    <select id="filter-semester" onchange="applyFilters()" disabled
+                        class="form-select w-full rounded-xl border-olive-cobalt-muted/20 bg-white text-xs font-bold text-primary focus:border-primary focus:ring-primary shadow-sm h-11 px-2 disabled:bg-gray-100 disabled:text-gray-400">
+                        <option value="">학기선택</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOP 3 판매량 순위 -->
+        <div class="px-4 pb-2">
+            <div id="top3-container" class="mt-3 px-1" th:style="${activeTab == 'history'} ? 'display:none' : ''">
+                <p class="text-xs font-bold text-primary mb-2">판매량 TOP 3</p>
+                <div class="rounded-xl p-3" style="border: 1.5px solid #6A8571;">
+                    <!-- 실제 TOP 3 (필터 적용 시) -->
+                    <div th:if="${topBooks != null and !topBooks.isEmpty()}" class="grid grid-cols-3 gap-3">
+                        <div th:each="topBook, iterStat : ${topBooks}" class="flex flex-col items-center cursor-pointer"
+                            th:data-book-id="${topBook.bookId}"
+                            onclick="scrollToBookCard(this.getAttribute('data-book-id'))">
+                            <div class="relative">
+                                <img th:if="${topBook.thumbnailUrl}" th:src="${topBook.thumbnailUrl}" alt=""
+                                    class="w-[90px] h-[130px] object-cover rounded-lg shadow-sm border border-olive-cobalt-muted/10" />
+                                <div class="absolute -top-2 -left-2 w-6 h-6 rounded-full flex items-center justify-center text-white text-[11px] font-bold shadow"
+                                    th:classappend="${iterStat.index == 0} ? 'bg-yellow-500' : (${iterStat.index == 1} ? 'bg-gray-400' : 'bg-amber-700')">
+                                    <span th:text="${iterStat.index + 1}">1</span>
+                                </div>
+                            </div>
+                            <p class="text-[11px] text-olive-cobalt-dark font-medium mt-1.5 text-center line-clamp-2 leading-tight w-[90px]"
+                                th:text="${topBook.title}">도서명</p>
+                        </div>
+                    </div>
+                    <!-- 스켈레톤 TOP 3 (필터 미적용 초기 상태) -->
+                    <div th:if="${topBooks == null or topBooks.isEmpty()}" id="top3-skeleton"
+                        class="grid grid-cols-3 gap-3">
+                        <div th:each="i : ${#numbers.sequence(1,3)}" class="flex flex-col items-center">
+                            <div class="relative">
+                                <div class="w-[90px] h-[130px] rounded-lg bg-olive-cobalt-muted/10 animate-pulse"></div>
+                                <div
+                                    class="absolute -top-2 -left-2 w-6 h-6 rounded-full bg-olive-cobalt-muted/20 animate-pulse">
+                                </div>
+                            </div>
+                            <div class="w-[70px] h-3 mt-1.5 rounded bg-olive-cobalt-muted/10 animate-pulse"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Contents with Slider -->
+        <div class="overflow-hidden w-full relative">
+            <div id="tab-slider" class="tab-slider-container"
+                th:style="${activeTab == 'history'} ? 'transform: translateX(-50%);' : 'transform: translateX(0);'">
+
+                <!-- Tab Pane: Best Sellers -->
+                <div id="tab-books" class="tab-content-pane flex flex-col p-4 gap-4">
+                    <!-- 초기 상태 안내 메시지 (필터 미적용 시) -->
+                    <div th:if="${books == null or books.isEmpty()}" id="empty-state"
+                        class="flex flex-col items-center justify-center py-16 text-olive-cobalt-muted">
+                        <span
+                            class="material-symbols-outlined text-5xl text-olive-cobalt-muted/30 mb-3">filter_alt</span>
+                        <p class="text-sm font-semibold text-olive-cobalt-dark/60">조건을 선택해 주세요</p>
+                        <p class="text-xs text-olive-cobalt-muted/60 mt-1">과목, 학교급 등 필터를 선택하면 참고서가 표시됩니다.</p>
+                    </div>
+                    <div th:each="book : ${books}"
+                        th:with="cleanTitle=${book.title.replace('...', '').trim()}, searchTitle=${cleanTitle.contains('(') ? cleanTitle.substring(0, cleanTitle.indexOf('(')).trim() : cleanTitle}, searchTitleShort=${searchTitle.contains('-') ? searchTitle.substring(0, searchTitle.indexOf('-')).trim() : searchTitle}">
+                        <div th:id="'book-card-' + ${book.bookId}"
+                            class="flex flex-col rounded-xl border border-olive-cobalt-muted/10 bg-white overflow-hidden shadow-sm">
+                            <div class="p-4 pb-2">
+                                <p class="text-primary text-base font-bold truncate text-center"
+                                    th:text="${book.title}">도서명</p>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-olive-cobalt-muted/60 text-[11px]"
+                                        th:text="${book.schoolLevel + ' · ' + book.subject}">학년 · 과목</span>
+                                </div>
+                            </div>
+                            <div class="px-4 pb-4">
+                                <div class="flex flex-col gap-5 mt-2">
+                                    <div class="flex gap-4">
+                                        <div class="flex flex-col items-center shrink-0 gap-2">
+                                            <div th:if="${book.thumbnailUrl}"
+                                                class="w-[127px] h-[194px] bg-center bg-no-repeat bg-cover rounded-lg shadow-sm border border-olive-cobalt-muted/10 cursor-pointer hover:opacity-80 transition-opacity thumbnail-clickable"
+                                                th:style="'background-image: url(' + ${book.thumbnailUrl} + ');'"
+                                                th:data-thumbnail-url="${book.thumbnailUrl}"></div>
+                                            <button th:data-book-id="${book.bookId}"
+                                                onclick="showBookDetail(this.getAttribute('data-book-id'))"
+                                                class="text-[10px] text-primary font-bold border border-primary/30 rounded-md px-3 py-1 hover:bg-primary/5 transition-colors">
+                                                간략 소개
+                                            </button>
+                                        </div>
+                                        <div class="flex-1 space-y-2 text-[13px] text-olive-cobalt-muted min-w-0">
+                                            <div class="flex justify-between border-b border-olive-cobalt-light pb-1">
+                                                <span>과목</span>
+                                                <span class="font-bold text-[#4A4F57]"
+                                                    th:text="${book.subject}">-</span>
+                                            </div>
+                                            <div class="flex justify-between border-b border-olive-cobalt-light pb-1">
+                                                <span>학년/학기</span>
+                                                <span class="font-bold text-[#4A4F57]">
+                                                    <span th:text="${book.schoolLevel}"></span>
+                                                    <th:block th:if="${book.grade != null}">
+                                                        <span th:text="' ' + ${book.grade}"></span>
+                                                        <span th:if="${book.semester != null and book.semester != '전체'}"
+                                                            th:text="' - ' + ${book.semester}"></span>
+                                                    </th:block>
+                                                </span>
+                                            </div>
+                                            <div class="flex justify-between border-b border-olive-cobalt-light pb-1">
+                                                <span>출판사</span>
+                                                <span class="font-bold text-[#4A4F57]"
+                                                    th:text="${book.publisher}">-</span>
+                                            </div>
+                                            <div class="flex justify-between border-b border-olive-cobalt-light pb-1">
+                                                <span>판차</span>
+                                                <span class="font-bold text-[#4A4F57]"
+                                                    th:text="${book.latestEditionNumber != null ? book.latestEditionNumber + '판' : '-'}">-</span>
+                                            </div>
+                                            <div class="flex justify-between border-b border-olive-cobalt-light pb-1">
+                                                <span>커리큘럼</span>
+                                                <span class="font-bold text-[#4A4F57]"
+                                                    th:text="${book.curriculum != null ? book.curriculum : '-'}">-</span>
+                                            </div>
+                                            <div class="flex justify-between border-b border-olive-cobalt-light pb-1">
+                                                <span>ISBN</span>
+                                                <span class="font-bold text-[#4A4F57]"
+                                                    th:text="${book.latestIsbn != null ? book.latestIsbn : '-'}">-</span>
+                                            </div>
+                                            <!-- 판매가격 비교 테이블 -->
+                                            <div
+                                                class="mt-2 rounded-lg border border-olive-cobalt-muted/10 overflow-hidden">
+                                                <table class="w-full text-xs">
+                                                    <thead>
+                                                        <tr class="border-b border-olive-cobalt-muted/10 bg-gray-50/50">
+                                                            <th
+                                                                class="text-left px-3 py-1 text-olive-cobalt-muted font-medium">
+                                                                판매정보
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr class="border-b border-olive-cobalt-muted/10">
+                                                            <td class="px-3 py-2">
+                                                                <a th:if="${book.aladinUrl}" th:href="${book.aladinUrl}"
+                                                                    target="_blank"
+                                                                    class="flex items-center gap-1.5 hover:underline">
+                                                                    <img src="https://www.google.com/s2/favicons?domain=aladin.co.kr&sz=32"
+                                                                        alt="알라딘" class="w-4 h-4">
+                                                                    <span class="font-medium text-[#4A4F57]">알라딘</span>
+                                                                </a>
+                                                                <span th:if="${book.aladinUrl == null}"
+                                                                    class="flex items-center gap-1.5">
+                                                                    <img src="https://www.google.com/s2/favicons?domain=aladin.co.kr&sz=32"
+                                                                        alt="알라딘" class="w-4 h-4">
+                                                                    <span class="font-medium text-[#4A4F57]">알라딘</span>
+                                                                </span>
+                                                            </td>
+                                                            <td class="px-3 py-2 text-right">
+                                                                <span class="font-bold text-[#4A4F57]"
+                                                                    th:text="${book.price != null ? #numbers.formatInteger(book.price, 0, 'COMMA') + '원' : '-'}">-</span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr class="border-b border-olive-cobalt-muted/10">
+                                                            <td class="px-3 py-2">
+                                                                <a th:href="${'https://search.kyobobook.co.kr/search?keyword=' + searchTitleShort + '&gbCode=TOT&target=total'}"
+                                                                    target="_blank"
+                                                                    class="flex items-center gap-1.5 hover:underline">
+                                                                    <img src="https://www.google.com/s2/favicons?domain=kyobobook.co.kr&sz=32"
+                                                                        alt="교보문고" class="w-4 h-4">
+                                                                    <span class="font-medium text-[#4A4F57]">교보문고</span>
+                                                                </a>
+                                                            </td>
+                                                            <td class="px-3 py-2 text-right">
+                                                                <a th:href="${'https://search.kyobobook.co.kr/search?keyword=' + searchTitleShort + '&gbCode=TOT&target=total'}"
+                                                                    target="_blank"
+                                                                    class="font-bold text-[10px] text-accent-orange hover:underline">구매하러가기</a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="px-3 py-2">
+                                                                <a th:href="${'https://www.coupang.com/np/search?component=&q=' + searchTitle}"
+                                                                    target="_blank"
+                                                                    class="flex items-center gap-1.5 hover:underline">
+                                                                    <img src="https://www.google.com/s2/favicons?domain=coupang.com&sz=32"
+                                                                        alt="쿠팡" class="w-4 h-4">
+                                                                    <span class="font-medium text-[#4A4F57]">쿠팡</span>
+                                                                </a>
+                                                            </td>
+                                                            <td class="px-3 py-2 text-right">
+                                                                <a th:href="${'https://www.coupang.com/np/search?component=&q=' + searchTitle}"
+                                                                    target="_blank"
+                                                                    class="font-bold text-[10px] text-accent-orange hover:underline">구매하러가기</a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="px-3 py-2">
+                                                                <a th:href="${'https://www.m.yes24.com/product/search?domain=ALL&query=' + searchTitleShort}"
+                                                                    target="_blank"
+                                                                    class="flex items-center gap-1.5 hover:underline">
+                                                                    <img src="https://www.google.com/s2/favicons?domain=yes24.com&sz=32"
+                                                                        alt="YES24" class="w-4 h-4">
+                                                                    <span
+                                                                        class="font-medium text-[#4A4F57]">YES24</span>
+                                                                </a>
+                                                            </td>
+                                                            <td class="px-3 py-2 text-right">
+                                                                <a th:href="${'https://www.m.yes24.com/product/search?domain=ALL&query=' + searchTitleShort}"
+                                                                    target="_blank"
+                                                                    class="font-bold text-[10px] text-accent-orange hover:underline">구매하러가기</a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="px-3 py-2">
+                                                                <a th:href="${'https://www.ypbooks.co.kr/search/book?word=' + searchTitleShort}"
+                                                                    target="_blank"
+                                                                    class="flex items-center gap-1.5 hover:underline">
+                                                                    <img src="https://www.google.com/s2/favicons?domain=ypbooks.co.kr&sz=32"
+                                                                        alt="영풍문고" class="w-4 h-4">
+                                                                    <span class="font-medium text-[#4A4F57]">영풍문고</span>
+                                                                </a>
+                                                            </td>
+                                                            <td class="px-3 py-2 text-right">
+                                                                <a th:href="${'https://www.ypbooks.co.kr/search/book?word=' + searchTitleShort}"
+                                                                    target="_blank"
+                                                                    class="font-bold text-[10px] text-accent-orange hover:underline">구매하러가기</a>
+                                                            </td>
+                                                        </tr>
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div th:if="${book.categoryName != null}"
+                                        class="text-center text-[11px] text-primary font-medium py-2 px-4 rounded-lg truncate"
+                                        style="background-color: #E1F7E0;">
+                                        <span th:text="${book.categoryName}">카테고리</span>
+                                    </div>
+
+                                    <p class="text-[10px] text-center text-olive-cobalt-muted/50 mt-1">※ 알라딘 공개 데이터 기반
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Pane: Search History -->
+                <div id="tab-history" class="tab-content-pane flex flex-col p-4 gap-4">
+                    <div class="flex justify-end items-center px-1">
+                        <button onclick="clearSearchHistory()" class="text-xs font-bold text-[#EB8B11]">전체삭제</button>
+                    </div>
+                    <div id="history-list"
+                        class="overflow-hidden rounded-xl border border-olive-cobalt-muted/20 bg-white shadow-sm">
+                        <table class="w-full text-left border-collapse h-full">
+                            <tbody id="history-tbody" class="h-full">
+                                <tr th:if="${recentSearches.empty}" class="empty-row flex-1">
+                                    <td class="text-center text-olive-cobalt-muted text-sm" colspan="2">
+                                        검색 이력이 없습니다.
+                                    </td>
+                                </tr>
+                                <tr th:each="keyword : ${recentSearches}"
+                                    class="border-b border-olive-cobalt-muted/10 last:border-0 hover:bg-slate-50 transition-colors">
+                                    <td class="p-4">
+                                        <a th:href="@{/search(q=${keyword})}" class="flex items-center gap-4 flex-1">
+                                            <span
+                                                class="material-symbols-outlined text-olive-cobalt-muted text-xl">history</span>
+                                            <span class="text-base font-medium text-olive-cobalt-dark"
+                                                th:text="${keyword}">Keyword</span>
+                                        </a>
+                                    </td>
+                                    <td class="p-4 text-right delete-cell">
+                                        <div class="flex items-center justify-end gap-4">
+                                            <span
+                                                class="material-symbols-outlined text-olive-cobalt-muted opacity-40 text-lg">north_west</span>
+                                            <span th:data-keyword="${keyword}"
+                                                onclick="deleteSearchItem(this.getAttribute('data-keyword'))"
+                                                class="material-symbols-outlined text-[#EB8B11] text-xl cursor-pointer hover:opacity-80">close</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer (Fixed) -->
+    <footer
+        class="fixed bottom-0 left-0 right-0 z-30 px-6 py-2.5 text-center border-t border-olive-cobalt-muted/10 bg-white/90 backdrop-blur-md">
+        <p class="text-[10px] text-olive-cobalt-muted/70 leading-snug">
+            BOOKPICT는 참고서 비교를 돕는 정보 제공 서비스입니다.<br>
+            판매 가격 및 재고 정보는 각 판매처의 실제 정보와 다를 수 있습니다.
+        </p>
+        <p class="text-[9px] text-olive-cobalt-muted/50 mt-1">&copy; 2026 BOOKPICT. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // ✅ Reset all and reload page (clear filters, search, and search history)
+        async function resetAllAndReload() {
+            try {
+                // 1. 검색 이력 삭제
+                await fetch('/api/search/recent', { method: 'DELETE' });
+
+                // 2. 페이지 완전 새로고침
+                window.location.href = '/';
+            } catch (error) {
+                console.error('Reset error:', error);
+                // 오류가 있어도 페이지는 새로고침
+                window.location.href = '/';
+            }
+        }
+
+        const gradeOptions = {
+            '초등': ['1학년', '2학년', '3학년', '4학년', '5학년', '6학년'],
+            '중등': ['1학년', '2학년', '3학년'],
+            '고등': ['1학년', '2학년', '3학년']
+        };
+
+        let currentFilters = {
+            subject: null,
+            schoolLevel: null,
+            grade: null,
+            semester: null
+        };
+
+        let currentTab = 'books';
+
+        function switchTab(tab) {
+            currentTab = tab;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            const slider = document.getElementById('tab-slider');
+            const booksBtn = document.getElementById('tab-btn-books');
+            const historyBtn = document.getElementById('tab-btn-history');
+            const filterContainer = document.getElementById('filter-container');
+            const filterGuide = document.getElementById('filter-guide');
+            const top3Container = document.getElementById('top3-container');
+
+            if (tab === 'books') {
+                slider.style.transform = 'translateX(0)';
+                if (filterContainer) filterContainer.style.display = 'grid';
+                if (filterGuide) { filterGuide.style.display = 'block'; filterGuide.style.marginBottom = '-12px'; }
+                if (top3Container) top3Container.style.display = 'block';
+                booksBtn.className = 'flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-primary text-white shadow-md border border-white/10';
+                historyBtn.className = 'flex-1 py-1.5 text-sm font-semibold rounded-lg transition-all text-olive-cobalt-muted';
+            } else {
+                slider.style.transform = 'translateX(-50%)';
+                if (filterContainer) filterContainer.style.display = 'none';
+                if (filterGuide) filterGuide.style.display = 'none';
+                if (top3Container) top3Container.style.display = 'none';
+                booksBtn.className = 'flex-1 py-1.5 text-sm font-bold rounded-lg transition-all text-olive-cobalt-muted';
+                historyBtn.className = 'flex-1 py-1.5 text-sm font-semibold rounded-lg transition-all bg-olive-teal-active text-white shadow-sm';
+            }
+        }
+
+        // 스와이프 제스처로 탭 전환
+        (function () {
+            const slider = document.getElementById('tab-slider');
+            if (!slider) return;
+            let touchStartX = 0;
+            let touchStartY = 0;
+
+            slider.addEventListener('touchstart', function (e) {
+                touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
+            }, { passive: true });
+
+            slider.addEventListener('touchend', function (e) {
+                const deltaX = e.changedTouches[0].screenX - touchStartX;
+                const deltaY = e.changedTouches[0].screenY - touchStartY;
+                if (Math.abs(deltaX) < 50 || Math.abs(deltaY) > Math.abs(deltaX)) return;
+                if (deltaX < 0 && currentTab === 'books') {
+                    switchTab('history');
+                } else if (deltaX > 0 && currentTab === 'history') {
+                    switchTab('books');
+                }
+            }, { passive: true });
+        })();
+
+        function updateGradeOptions() {
+            const schoolLevel = document.getElementById('filter-level').value;
+            const gradeSelect = document.getElementById('filter-grade');
+            const semesterSelect = document.getElementById('filter-semester');
+
+            if (!schoolLevel) {
+                gradeSelect.disabled = true;
+                gradeSelect.innerHTML = '<option value="">학년선택</option>';
+                semesterSelect.disabled = true;
+                semesterSelect.innerHTML = '<option value="">학기선택</option>';
+                currentFilters.grade = null;
+                currentFilters.semester = null;
+                applyFilters();
+                return;
+            }
+
+            gradeSelect.disabled = false;
+            gradeSelect.innerHTML = '<option value="">전체학년</option>';
+
+            const grades = gradeOptions[schoolLevel] || [];
+            grades.forEach(grade => {
+                const option = document.createElement('option');
+                option.value = grade;
+                option.textContent = grade;
+                gradeSelect.appendChild(option);
+            });
+
+            semesterSelect.disabled = false;
+            semesterSelect.innerHTML = '<option value="">전체학기</option>';
+            ['1학기', '2학기'].forEach(sem => {
+                const option = document.createElement('option');
+                option.value = sem;
+                option.textContent = sem;
+                semesterSelect.appendChild(option);
+            });
+
+            applyFilters();
+        }
+
+        function scrollToBookCard(bookId) {
+            const card = document.getElementById('book-card-' + bookId);
+            if (card) {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                card.classList.add('ring-2', 'ring-primary', 'ring-offset-2');
+                setTimeout(() => card.classList.remove('ring-2', 'ring-primary', 'ring-offset-2'), 2000);
+            }
+        }
+
+        function renderTop3(books) {
+            const container = document.getElementById('top3-container');
+            if (!container) return;
+
+            const topBooks = books
+                .filter(b => b.bestsellerRank != null)
+                .sort((a, b) => a.bestsellerRank - b.bestsellerRank)
+                .slice(0, 3);
+
+            if (topBooks.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'block';
+            const badgeColors = ['bg-yellow-500', 'bg-gray-400', 'bg-amber-700'];
+            container.innerHTML = `
+                <p class="text-xs font-bold text-primary mb-2">판매량 TOP 3</p>
+                <div class="rounded-xl p-3" style="border: 1.5px solid #6A8571;">
+                    <div class="grid grid-cols-3 gap-3">
+                        ${topBooks.map((book, i) => `
+                            <div class="flex flex-col items-center cursor-pointer" onclick="scrollToBookCard('${book.bookId}')">
+                                <div class="relative">
+                                    ${book.thumbnailUrl ? `<img src="${book.thumbnailUrl}" alt="" class="w-[90px] h-[130px] object-cover rounded-lg shadow-sm border border-olive-cobalt-muted/10" />` : ''}
+                                    <div class="absolute -top-2 -left-2 w-6 h-6 rounded-full flex items-center justify-center text-white text-[11px] font-bold shadow ${badgeColors[i]}">
+                                        ${i + 1}
+                                    </div>
+                                </div>
+                                <p class="text-[11px] text-olive-cobalt-dark font-medium mt-1.5 text-center line-clamp-2 leading-tight w-[90px]">${book.title}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSkeletonTop3() {
+            const container = document.getElementById('top3-container');
+            if (!container) return;
+            container.innerHTML = `
+                <p class="text-xs font-bold text-primary mb-2">판매량 TOP 3</p>
+                <div class="rounded-xl p-3" style="border: 1.5px solid #6A8571;">
+                    <div class="grid grid-cols-3 gap-3">
+                        ${[1, 2, 3].map(() => `
+                            <div class="flex flex-col items-center">
+                                <div class="relative">
+                                    <div class="w-[90px] h-[130px] rounded-lg bg-olive-cobalt-muted/10 animate-pulse"></div>
+                                    <div class="absolute -top-2 -left-2 w-6 h-6 rounded-full bg-olive-cobalt-muted/20 animate-pulse"></div>
+                                </div>
+                                <div class="w-[70px] h-3 mt-1.5 rounded bg-olive-cobalt-muted/10 animate-pulse"></div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderEmptyState() {
+            const container = document.getElementById('tab-books');
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-16 text-olive-cobalt-muted">
+                    <span class="material-symbols-outlined text-5xl text-olive-cobalt-muted/30 mb-3">filter_alt</span>
+                    <p class="text-sm font-semibold text-olive-cobalt-dark/60">조건을 선택해 주세요</p>
+                    <p class="text-xs text-olive-cobalt-muted/60 mt-1">과목, 학교급 등 필터를 선택하면 참고서가 표시됩니다.</p>
+                </div>
+            `;
+        }
+
+        async function applyFilters() {
+            const subject = document.getElementById('filter-subject').value;
+            const schoolLevel = document.getElementById('filter-level').value;
+            const grade = document.getElementById('filter-grade').value;
+            const semester = document.getElementById('filter-semester').value;
+
+            currentFilters.subject = subject || null;
+            currentFilters.schoolLevel = schoolLevel || null;
+            currentFilters.grade = grade || null;
+            currentFilters.semester = semester || null;
+
+            const hasAnyFilter = subject || schoolLevel || grade || semester;
+
+            if (!hasAnyFilter) {
+                renderSkeletonTop3();
+                renderEmptyState();
+                return;
+            }
+
+            const params = new URLSearchParams();
+            if (currentFilters.subject) params.append('subject', currentFilters.subject);
+            if (currentFilters.schoolLevel) params.append('schoolLevel', currentFilters.schoolLevel);
+            if (currentFilters.grade) params.append('grade', currentFilters.grade);
+            if (currentFilters.semester) params.append('semester', currentFilters.semester);
+
+            const url = '/api/books?' + params.toString();
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                renderTop3(data);
+                data.sort((a, b) => {
+                    const ra = a.bestsellerRank != null ? a.bestsellerRank : Number.MAX_SAFE_INTEGER;
+                    const rb = b.bestsellerRank != null ? b.bestsellerRank : Number.MAX_SAFE_INTEGER;
+                    return ra - rb;
+                });
+                renderBooks(data);
+            } catch (error) {
+                console.error('Filter fetch error:', error);
+            }
+        }
+
+        // Alert on page load if initial results > 50
+        window.addEventListener('DOMContentLoaded', () => {
+            const initialCount = [[${ books != null ? books.size() : 0}]];
+            
+        });
+
+        function renderStars(rating) {
+            if (!rating) return '-';
+            const fullStars = Math.floor(rating);
+            const halfStar = rating % 1 >= 0.5 ? 1 : 0;
+            const emptyStars = 5 - fullStars - halfStar;
+
+            let stars = '';
+            for (let i = 0; i < fullStars; i++) stars += '<span class="material-symbols-outlined text-xs text-yellow-500 fill-1">star</span>';
+            if (halfStar) stars += '<span class="material-symbols-outlined text-xs text-yellow-500 fill-1">star_half</span>';
+            for (let i = 0; i < emptyStars; i++) stars += '<span class="material-symbols-outlined text-xs text-olive-cobalt-muted/30">star</span>';
+            return `<div class="flex items-center gap-0.5">${stars} <span class="ml-1 text-[11px] font-bold text-[#6B091B]">${rating}</span></div>`;
+        }
+
+        function renderBooks(books) {
+            const container = document.getElementById('tab-books');
+            container.innerHTML = '';
+
+            if (books.length === 0) {
+                container.innerHTML = '<div class="text-center py-20 text-olive-cobalt-muted">검색 결과가 없습니다.</div>';
+                return;
+            }
+
+            books.forEach(book => {
+                const gradeDisplay = book.grade ? ' ' + book.grade : '';
+                const semesterDisplay = (book.grade && book.semester && book.semester !== '전체') ? ' - ' + book.semester : '';
+                const cleanTitle = book.title.replace(/\.\.\./g, '').trim();
+                const searchTitle = cleanTitle.includes('(') ? cleanTitle.split('(')[0].trim() : cleanTitle;
+                const searchTitleShort = searchTitle.includes('-') ? searchTitle.split('-')[0].trim() : searchTitle;
+                const html = `
+                    <div id="book-card-${book.bookId}" class="flex flex-col rounded-xl border border-olive-cobalt-muted/10 bg-white overflow-hidden shadow-sm">
+                        <div class="p-4 pb-2">
+                            <p class="text-primary text-base font-bold truncate text-center">${book.title}</p>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="text-olive-cobalt-muted/60 text-[11px]">${book.schoolLevel} · ${book.subject}</span>
+                            </div>
+                        </div>
+                        <div class="px-4 pb-4">
+                            <div class="flex flex-col gap-5 mt-2">
+                                <div class="flex gap-4">
+                                    <div class="flex flex-col items-center shrink-0 gap-2">
+                                        ${book.thumbnailUrl ? `<div class="w-[127px] h-[194px] bg-center bg-no-repeat bg-cover rounded-lg shadow-sm border border-olive-cobalt-muted/10 cursor-pointer hover:opacity-80 transition-opacity thumbnail-clickable" style="background-image: url('${book.thumbnailUrl}');" data-thumbnail-url="${book.thumbnailUrl}"></div>` : ''}
+                                        <button onclick="showBookDetail('${book.bookId}')" class="text-[10px] text-primary font-bold border border-primary/30 rounded-md px-3 py-1 hover:bg-primary/5 transition-colors">
+                                            간략 소개
+                                        </button>
+                                    </div>
+                                    <div class="flex-1 space-y-2 text-[13px] text-olive-cobalt-muted min-w-0">
+                                        <div class="flex justify-between border-b border-olive-cobalt-light pb-1">
+                                            <span>과목</span>
+                                            <span class="font-bold text-[#4A4F57]">${book.subject}</span>
+                                        </div>
+                                        <div class="flex justify-between border-b border-olive-cobalt-light pb-1">
+                                            <span>학년/학기</span>
+                                            <span class="font-bold text-[#4A4F57]">${book.schoolLevel}${gradeDisplay}${semesterDisplay}</span>
+                                        </div>
+                                        <div class="flex justify-between border-b border-olive-cobalt-light pb-1">
+                                            <span>출판사</span>
+                                            <span class="font-bold text-[#4A4F57]">${book.publisher}</span>
+                                        </div>
+                                        <div class="flex justify-between border-b border-olive-cobalt-light pb-1">
+                                            <span>판차</span>
+                                            <span class="font-bold text-[#4A4F57]">${book.latestEditionNumber ? book.latestEditionNumber + '판' : '-'}</span>
+                                        </div>
+                                        <div class="flex justify-between border-b border-olive-cobalt-light pb-1">
+                                            <span>커리큘럼</span>
+                                            <span class="font-bold text-[#4A4F57]">${book.curriculum || '-'}</span>
+                                        </div>
+                                        <div class="flex justify-between border-b border-olive-cobalt-light pb-1">
+                                            <span>ISBN</span>
+                                            <span class="font-bold text-[#4A4F57]">${book.latestIsbn || '-'}</span>
+                                        </div>
+                                        <!-- 판매가격 비교 테이블 -->
+                                        <div class="mt-2 rounded-lg border border-olive-cobalt-muted/10 overflow-hidden">
+                                            <table class="w-full text-xs">
+                                                <thead>
+                                                    <tr class="border-b border-olive-cobalt-muted/10 bg-gray-50/50">
+                                                        <th class="text-left px-3 py-1 text-olive-cobalt-muted font-medium">판매정보</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr class="border-b border-olive-cobalt-muted/10">
+                                                        <td class="px-3 py-2">
+                                                            ${book.aladinUrl ? `<a href="javascript:void(0)" onclick="openExternalLink('${book.aladinUrl}')" class="flex items-center gap-1.5 hover:underline">
+                                                                <img src="https://www.google.com/s2/favicons?domain=aladin.co.kr&sz=32" alt="알라딘" class="w-4 h-4">
+                                                                <span class="font-medium text-[#4A4F57]">알라딘</span>
+                                                            </a>` : `<span class="flex items-center gap-1.5">
+                                                                <img src="https://www.google.com/s2/favicons?domain=aladin.co.kr&sz=32" alt="알라딘" class="w-4 h-4">
+                                                                <span class="font-medium text-[#4A4F57]">알라딘</span>
+                                                            </span>`}
+                                                        </td>
+                                                        <td class="px-3 py-2 text-right">
+                                                            <span class="font-bold text-[#4A4F57]">${book.price ? new Intl.NumberFormat().format(book.price) + '원' : '-'}</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr class="border-b border-olive-cobalt-muted/10">
+                                                        <td class="px-3 py-2">
+                                                            <a href="https://search.kyobobook.co.kr/search?keyword=${encodeURIComponent(searchTitleShort)}&gbCode=TOT&target=total" target="_blank" class="flex items-center gap-1.5 hover:underline">
+                                                                <img src="https://www.google.com/s2/favicons?domain=kyobobook.co.kr&sz=32" alt="교보문고" class="w-4 h-4">
+                                                                <span class="font-medium text-[#4A4F57]">교보문고</span>
+                                                            </a>
+                                                        </td>
+                                                        <td class="px-3 py-2 text-right">
+                                                            <a href="https://search.kyobobook.co.kr/search?keyword=${encodeURIComponent(searchTitleShort)}&gbCode=TOT&target=total" target="_blank"
+                                                                class="font-bold text-[10px] text-accent-orange hover:underline">구매하러가기</a>
+                                                        </td>
+                                                    </tr>
+                                                    <tr class="border-b border-olive-cobalt-muted/10">
+                                                        <td class="px-3 py-2">
+                                                            <a href="https://www.coupang.com/np/search?component=&q=${encodeURIComponent(searchTitle)}" target="_blank" class="flex items-center gap-1.5 hover:underline">
+                                                                <img src="https://www.google.com/s2/favicons?domain=coupang.com&sz=32" alt="쿠팡" class="w-4 h-4">
+                                                                <span class="font-medium text-[#4A4F57]">쿠팡</span>
+                                                            </a>
+                                                        </td>
+                                                        <td class="px-3 py-2 text-right">
+                                                            <a href="https://www.coupang.com/np/search?component=&q=${encodeURIComponent(searchTitle)}" target="_blank"
+                                                                class="font-bold text-[10px] text-accent-orange hover:underline">구매하러가기</a>
+                                                        </td>
+                                                    </tr>
+                                                    <tr class="border-b border-olive-cobalt-muted/10">
+                                                        <td class="px-3 py-2">
+                                                            <a href="https://www.yes24.com/product/search?domain=ALL&query=${encodeURIComponent(searchTitleShort)}" target="_blank" class="flex items-center gap-1.5 hover:underline">
+                                                                <img src="https://www.google.com/s2/favicons?domain=yes24.com&sz=32" alt="YES24" class="w-4 h-4">
+                                                                <span class="font-medium text-[#4A4F57]">YES24</span>
+                                                            </a>
+                                                        </td>
+                                                        <td class="px-3 py-2 text-right">
+                                                            <a href="https://www.yes24.com/product/search?domain=ALL&query=${encodeURIComponent(searchTitleShort)}" target="_blank"
+                                                                class="font-bold text-[10px] text-accent-orange hover:underline">구매하러가기</a>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="px-3 py-2">
+                                                            <a href="https://www.ypbooks.co.kr/search/book?word=${encodeURIComponent(searchTitleShort)}" target="_blank" class="flex items-center gap-1.5 hover:underline">
+                                                                <img src="https://www.google.com/s2/favicons?domain=ypbooks.co.kr&sz=32" alt="영풍문고" class="w-4 h-4">
+                                                                <span class="font-medium text-[#4A4F57]">영풍문고</span>
+                                                            </a>
+                                                        </td>
+                                                        <td class="px-3 py-2 text-right">
+                                                            <a href="https://www.ypbooks.co.kr/search/book?word=${encodeURIComponent(searchTitleShort)}" target="_blank"
+                                                                class="font-bold text-[10px] text-accent-orange hover:underline">구매하러가기</a>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                ${book.categoryName ? `<div class="text-center text-[11px] text-primary font-medium py-2 px-4 rounded-lg truncate" style="background-color: #E1F7E0;">
+                                    ${book.categoryName}
+                                </div>` : ''}
+
+                                <p class="text-[10px] text-center text-olive-cobalt-muted/50 mt-1">※ 알라딘 공개 데이터 기반</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        function clearSearch() {
+            document.querySelector('input[name="q"]').value = '';
+        }
+
+        // ✅ Thumbnail Modal (Accordion Only)
+        function openThumbnailModal(imageUrl) {
+            const modal = document.getElementById('thumbnail-modal-overlay');
+            const img = document.getElementById('thumbnail-modal-img');
+            img.src = imageUrl;
+            modal.classList.remove('hidden');
+        }
+
+        function closeThumbnailModal() {
+            const modal = document.getElementById('thumbnail-modal-overlay');
+            modal.classList.add('hidden');
+        }
+
+        // Event delegation for thumbnail clicks
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('thumbnail-clickable')) {
+                const url = e.target.getAttribute('data-thumbnail-url');
+                if (url) openThumbnailModal(url);
+            }
+        });
+
+
+
+        async function deleteSearchItem(keyword) {
+            try {
+                await fetch(`/api/search/recent/${encodeURIComponent(keyword)}`, { method: 'DELETE' });
+                refreshHistoryUI();
+            } catch (error) {
+                console.error('Delete search item error:', error);
+            }
+        }
+
+        async function clearSearchHistory() {
+            try {
+                await fetch('/api/search/recent', { method: 'DELETE' });
+                refreshHistoryUI();
+            } catch (error) {
+                console.error('Clear search history error:', error);
+            }
+        }
+
+        async function refreshHistoryUI() {
+            try {
+                const response = await fetch('/api/search/recent');
+                const searches = await response.json();
+                const tbody = document.getElementById('history-tbody');
+
+                if (searches.length === 0) {
+                    tbody.innerHTML = '<tr class="empty-row flex-1"><td class="text-center text-olive-cobalt-muted text-sm">검색 이력이 없습니다.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = searches.map(keyword => `
+                    <tr class="border-b border-olive-cobalt-muted/10 last:border-0 hover:bg-slate-50 transition-colors">
+                        <td class="p-4">
+                            <a href="/search?q=${encodeURIComponent(keyword)}" class="flex items-center gap-4 flex-1">
+                                <span class="material-symbols-outlined text-olive-cobalt-muted text-xl">history</span>
+                                <span class="text-base font-medium text-olive-cobalt-dark">${keyword}</span>
+                            </a>
+                        </td>
+                        <td class="p-4 text-right delete-cell">
+                            <div class="flex items-center justify-end gap-4">
+                                <span class="material-symbols-outlined text-olive-cobalt-muted opacity-40 text-lg">north_west</span>
+                                <span onclick="deleteSearchItem('${keyword.replace(/'/g, "\\'")}')"
+                                    class="material-symbols-outlined text-[#EB8B11] text-xl cursor-pointer hover:opacity-80">close</span>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Refresh history error:', error);
+            }
+        }
+
+        function showBookDetail(bookId) {
+            fetch(`/api/books/${bookId}`)
+                .then(res => res.json())
+                .then(book => {
+                    document.getElementById('modal-title').textContent = book.title;
+                    document.getElementById('modal-summary').textContent = book.summary || '상세 설명이 없습니다.';
+
+                    document.getElementById('book-modal-overlay').classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                });
+        }
+
+        function closeDetailModal() {
+            document.getElementById('book-modal-overlay').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function openHelpModal() {
+            document.getElementById('help-modal-overlay').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeHelpModal() {
+            document.getElementById('help-modal-overlay').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // 검색 로딩 표시
+        function showSearchLoading() {
+            document.getElementById('search-loading').classList.remove('hidden');
+        }
+
+        // 검색 폼 제출 시 로딩
+        document.querySelector('form[action*="/search"]')?.addEventListener('submit', function (e) {
+            const input = this.querySelector('input[name="q"]');
+            if (input && input.value.trim()) {
+                showSearchLoading();
+            }
+        });
+
+        // 검색이력 링크 클릭 시 로딩 (이벤트 위임)
+        document.getElementById('tab-history')?.addEventListener('click', function (e) {
+            const link = e.target.closest('a[href*="/search"]');
+            if (link) {
+                e.preventDefault();
+                showSearchLoading();
+                window.location.href = link.href;
+            }
+        });
+
+        // Scroll to Top 버튼 표시/숨김 (DOMContentLoaded 후 실행)
+        document.addEventListener('DOMContentLoaded', function () {
+            const btn = document.getElementById('scroll-top-btn');
+            if (!btn) return;
+            window.addEventListener('scroll', function () {
+                if (window.scrollY > 300) {
+                    btn.classList.remove('opacity-0', 'pointer-events-none');
+                    btn.classList.add('opacity-100');
+                } else {
+                    btn.classList.add('opacity-0', 'pointer-events-none');
+                    btn.classList.remove('opacity-100');
+                }
+            }, { passive: true });
+        });
+    </script>
+
+    <!-- Detail Modal -->
+    <div id="book-modal-overlay" class="fixed inset-0 z-50 bg-black/30 hidden flex items-center justify-center px-4"
+        onclick="closeDetailModal()">
+        <div id="book-modal"
+            class="relative bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl transform transition-all flex flex-col"
+            style="max-height: 80vh;" onclick="event.stopPropagation()">
+            <div class="px-6 py-4 border-b border-olive-cobalt-muted/10 shrink-0 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-primary" id="modal-title">도서 상세</h3>
+                <button onclick="closeDetailModal()"
+                    class="material-symbols-outlined text-olive-cobalt-muted">close</button>
+            </div>
+            <div class="p-6 overflow-y-auto space-y-6 no-scrollbar flex-1">
+                <div>
+                    <h4 class="text-sm font-bold text-primary mb-2">상세 설명</h4>
+                    <p class="text-sm text-olive-cobalt-dark/80 whitespace-pre-wrap leading-relaxed px-1"
+                        id="modal-summary">
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thumbnail Modal (Accordion Only) -->
+    <div id="thumbnail-modal-overlay"
+        class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center backdrop-blur-sm"
+        onclick="closeThumbnailModal()">
+        <div class="relative flex flex-col items-center" onclick="event.stopPropagation()">
+            <button onclick="closeThumbnailModal()"
+                class="absolute -top-8 right-0 text-white bg-black/40 rounded-full p-2 hover:bg-black/60 transition">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <img id="thumbnail-modal-img" src="" alt="Book Thumbnail" class="max-h-[80vh] rounded-lg shadow-2xl" />
+        </div>
+    </div>
+
+    <!-- Search Loading Overlay -->
+    <div id="search-loading"
+        class="fixed inset-0 z-[60] bg-white/80 backdrop-blur-sm hidden flex items-center justify-center">
+        <div class="flex flex-col items-center gap-3">
+            <div class="w-8 h-8 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+            <p class="text-sm font-semibold text-primary">검색 중...</p>
+        </div>
+    </div>
+
+    <!-- Scroll to Top Button -->
+    <button id="scroll-top-btn"
+        class="fixed bottom-24 right-4 z-40 w-10 h-10 rounded-full bg-primary text-white shadow-lg flex items-center justify-center transition-all opacity-0 pointer-events-none"
+        onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">
+        <span class="material-symbols-outlined text-xl">arrow_upward</span>
+    </button>
+
+    <!-- Help Modal -->
+    <div id="help-modal-overlay" class="fixed inset-0 z-50 bg-black/30 hidden flex items-center justify-center px-4"
+        Edit c:\work\edu-bookpict\app\src\main\java\edu\bookpict\aladin\scheduler\AladinSyncScheduler.java Modified Edit
+        c:\work\edu-bookpict\app\src\main\java\edu\bookpict\aladin\scheduler\AladinSyncScheduler.java Modified
+        onclick="closeHelpModal()">
+        <div id="help-modal"
+            class="relative bg-white rounded-3xl overflow-hidden shadow-2xl transform transition-all flex flex-col"
+            style="width:80%;max-width:80%;height:70%;max-height:70%;" onclick="event.stopPropagation()">
+            <div class="px-6 py-4 border-b border-olive-cobalt-muted/10 shrink-0 flex justify-between items-center">
+                <h3 class="text-base font-bold text-primary">BOOKPICT 이용 안내</h3>
+                <button onclick="closeHelpModal()"
+                    class="material-symbols-outlined text-olive-cobalt-muted">close</button>
+            </div>
+            <div class="p-6 overflow-y-auto space-y-4 no-scrollbar flex-1">
+                <div id="help-content" class="text-sm text-olive-cobalt-dark/80 leading-relaxed space-y-4">
+                    <div>
+                        <p class="leading-relaxed">
+                            BOOKPICT는<br>
+                            초·중·고 참고서를 과목, 학년, 학기별로 비교하고<br>
+                            판매처별 구매 정보를 한눈에 볼 수 있도록 돕는<br>
+                            참고서 비교 검색 서비스입니다.
+                        </p>
+                    </div>
+
+                    <div class="border-t border-olive-cobalt-muted/20 pt-4">
+                        <ul class="space-y-2 text-xs text-olive-cobalt-muted">
+                            <li>• 가격 정보는 실시간이 아니며, 실제 판매 가격과 다를 수 있습니다.</li>
+                            <li>• 정확한 구매 정보는 각 판매처 페이지에서 반드시 확인해 주세요.</li>
+                            <li>• 참고서 기본 정보 및 판매 정보: 알라딘 공개 데이터(Open API)</li>
+                        </ul>
+                    </div>
+
+                    <div class="border-t border-olive-cobalt-muted/20 pt-4">
+                        <p class="text-xs text-olive-cobalt-muted leading-relaxed">
+                            BOOKPICT는 현재 베타 서비스로 운영 중입니다.<br>
+                            이용 중 불편사항이나 개선 의견은<br>
+                            추후 제공될 피드백 채널을 통해 전달해 주세요.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

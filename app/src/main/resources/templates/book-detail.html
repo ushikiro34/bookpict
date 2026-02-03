@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${book.title} + ' - 상세 정보'">도서 상세 정보</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#6a8571",
+                        "accent-orange": "#fb923c",
+                        "olive-cobalt-light": "#f8faf8",
+                        "olive-cobalt-muted": "#8ca391",
+                        "olive-cobalt-dark": "#4a5d4e",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+
+    <style type="text/tailwindcss">
+        :root {
+            --primary-mix: #6a8571;
+            --soft-mix: #f2f5f2;
+            --bg-neutral: #fafbf9;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-neutral);
+            font-size: 18.66px;
+        }
+    </style>
+</head>
+
+<body class="bg-[var(--bg-neutral)] font-display text-olive-cobalt-dark pb-20">
+    <!-- Header -->
+    <div
+        class="flex items-center bg-white/80 backdrop-blur-md p-4 sticky top-0 z-20 border-b border-olive-cobalt-muted/10">
+        <a href="/" class="text-primary flex size-10 items-center justify-start">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </a>
+        <h2 class="text-primary text-lg font-bold flex-1 text-center truncate" th:text="${book.title}">도서 상세</h2>
+        <div class="size-10"></div>
+    </div>
+
+    <div class="p-4 space-y-6">
+        <!-- Book Info Header -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-olive-cobalt-muted/10 flex gap-6">
+            <div th:if="${book.thumbnailUrl}"
+                class="w-32 h-48 shrink-0 bg-center bg-no-repeat bg-cover rounded-xl shadow-md border border-olive-cobalt-muted/10"
+                th:style="'background-image: url(' + ${book.thumbnailUrl} + ');'"></div>
+            <div class="flex-1 space-y-3">
+                <div class="flex gap-2">
+                    <span class="text-xs bg-primary/10 text-primary px-3 py-1 rounded-full font-bold"
+                        th:text="${book.subject}">수학</span>
+                    <span class="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full"
+                        th:text="${book.schoolLevel}">고등</span>
+                </div>
+                <h1 class="text-2xl font-bold text-slate-800" th:text="${book.title}">도서명</h1>
+                <p class="text-olive-cobalt-muted font-medium" th:text="${book.publisher}">출판사</p>
+                <p class="text-sm text-slate-600 leading-relaxed" th:text="${book.summary}">책 요약 정보</p>
+            </div>
+        </div>
+
+        <!-- Aladin Metrics & BookPict Index -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-olive-cobalt-muted/10 grid grid-cols-2 gap-4">
+            <div class="text-center p-4 bg-primary/5 rounded-xl border border-primary/10">
+                <p class="text-[11px] text-olive-cobalt-muted font-bold mb-1">BookPict 지수</p>
+                <p class="text-2xl font-black text-primary"
+                    th:text="${book.bookPictIndex != null ? #numbers.formatDecimal(book.bookPictIndex, 1, 1) : '-'}">8.5
+                </p>
+            </div>
+            <div class="text-center p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <p class="text-[11px] text-olive-cobalt-muted font-bold mb-1">알라딘 랭킹</p>
+                <p class="text-2xl font-bold text-slate-700"
+                    th:text="${book.bestsellerRank != null ? book.bestsellerRank + '위' : '-'}">12위</p>
+            </div>
+        </div>
+
+        <!-- Editions & Prices (Unified for Aladin) -->
+        <div th:each="isbn : ${book.isbns}" class="space-y-4">
+            <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">menu_book</span>
+                ISBN: <span th:text="${isbn.isbn}">978...</span>
+            </h3>
+
+            <div th:each="edition : ${isbn.editions}"
+                class="bg-white rounded-2xl overflow-hidden border border-olive-cobalt-muted/10 shadow-sm">
+                <div class="bg-primary/5 p-4 flex justify-between items-center border-b border-olive-cobalt-muted/10">
+                    <span class="font-bold text-primary"
+                        th:text="${edition.editionNumber + '판 ' + edition.printNumber + '쇄'}">1판 1쇄</span>
+                    <span th:if="${edition.isLatest}"
+                        class="bg-primary text-white text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Latest</span>
+                </div>
+
+                <div class="p-6 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <div class="flex flex-col">
+                            <span class="text-sm text-olive-cobalt-muted font-bold">알라딘 판매가</span>
+                            <span class="text-2xl font-bold text-slate-800"
+                                th:text="${book.price != null ? '₩' + #numbers.formatInteger(book.price, 0, 'COMMA') : '-'}">₩14,500</span>
+                        </div>
+                        <div class="flex flex-col items-end">
+                            <div class="flex items-center gap-1">
+                                <span class="material-symbols-outlined text-accent-orange"
+                                    style="font-variation-settings: 'FILL' 1">star</span>
+                                <span class="text-xl font-bold text-slate-800"
+                                    th:text="${book.rating != null ? book.rating : '-'}">4.6</span>
+                            </div>
+                            <span class="text-xs text-olive-cobalt-muted mt-1"
+                                th:text="${book.reviewCount != null ? #numbers.formatInteger(book.reviewCount, 0, 'COMMA') + ' reviews' : '0 reviews'}">8,920
+                                reviews</span>
+                        </div>
+                    </div>
+
+                    <a th:href="${book.aladinUrl}" target="_blank"
+                        class="block w-full bg-primary text-white text-center py-4 rounded-xl font-bold shadow-lg shadow-primary/20 active:scale-[0.98] transition-all">
+                        알라딘에서 구매하기
+                    </a>
+
+                    <p class="text-[10px] text-center text-olive-cobalt-muted/50">※ 알라딘 공개 데이터 기반</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
