@@ -58,19 +58,19 @@ public class OneTimeElementarySyncScheduler {
 
     // ❌ API 제한으로 비활성화 (2026-02-03)
     // /**
-    //  * 21:40 - 초등 한국사
-    //  */
+    // * 21:40 - 초등 한국사
+    // */
     // @Scheduled(cron = "0 40 21 3 2 *", zone = "Asia/Seoul")
     // public void syncElementaryKoreanHistory() {
-    //     runFullSync("초등", "한국사");
+    // runFullSync("초등", "한국사");
     // }
 
     // /**
-    //  * 22:40 - 초등 세계사
-    //  */
+    // * 22:40 - 초등 세계사
+    // */
     // @Scheduled(cron = "0 40 22 3 2 *", zone = "Asia/Seoul")
     // public void syncElementaryWorldHistory() {
-    //     runFullSync("초등", "세계사");
+    // runFullSync("초등", "세계사");
     // }
 
     /**
@@ -125,23 +125,23 @@ public class OneTimeElementarySyncScheduler {
     private List<String> buildSearchQueries(String schoolLevel, String subject) {
         List<String> queries = new ArrayList<>();
 
-        // 1. 기본 쿼리 (참고서 제외)
-        queries.add(schoolLevel + " " + subject);
+        // 1. 기본 쿼리 (참고서 포함)
+        queries.add(schoolLevel + " " + subject + " 참고서");
 
         // 2. 학년별 쿼리 추가
         String[] grades;
         if ("초등".equals(schoolLevel)) {
-            grades = new String[]{"1학년", "2학년", "3학년", "4학년", "5학년", "6학년"};
+            grades = new String[] { "1학년", "2학년", "3학년", "4학년", "5학년", "6학년" };
         } else if ("중등".equals(schoolLevel)) {
-            grades = new String[]{"1학년", "2학년", "3학년"};
+            grades = new String[] { "1학년", "2학년", "3학년" };
         } else if ("고등".equals(schoolLevel)) {
-            grades = new String[]{"1학년", "2학년", "3학년"};
+            grades = new String[] { "1학년", "2학년", "3학년" };
         } else {
-            grades = new String[]{};
+            grades = new String[] {};
         }
 
         for (String grade : grades) {
-            queries.add(schoolLevel + " " + subject + " " + grade);
+            queries.add(schoolLevel + " " + subject + " " + grade + " 참고서");
         }
 
         return queries;
@@ -168,10 +168,12 @@ public class OneTimeElementarySyncScheduler {
             try {
                 int startIndex = page * pageSize + 1;
 
-                log.info("  📄 Page {} (start={}, tracked ISBNs={})", page + 1, startIndex, sessionProcessedIsbns.size());
+                log.info("  📄 Page {} (start={}, tracked ISBNs={})", page + 1, startIndex,
+                        sessionProcessedIsbns.size());
 
                 // ✅ 세션 공유 ISBN Set으로 중복 체크
-                SyncResult result = aladinBookService.searchAndSyncWithDedup(query, startIndex, pageSize, sessionProcessedIsbns);
+                SyncResult result = aladinBookService.searchAndSyncWithDedup(query, startIndex, pageSize,
+                        sessionProcessedIsbns);
 
                 totalNewIsbns += result.getNewIsbns();
                 totalDuplicates += result.getDuplicateIsbns();
@@ -191,7 +193,7 @@ public class OneTimeElementarySyncScheduler {
                 if (result.getDuplicateRate() >= dupThreshold) {
                     highDupPages++;
                     log.warn("  ⚠️ High duplicate rate: {}% ({} consecutive)",
-                            (int)(result.getDuplicateRate() * 100), highDupPages);
+                            (int) (result.getDuplicateRate() * 100), highDupPages);
 
                     // 연속 3페이지 이상 높은 중복률이면 조기 중단
                     if (highDupPages >= 3) {
@@ -208,11 +210,14 @@ public class OneTimeElementarySyncScheduler {
             } catch (Exception e) {
                 log.error("  ❌ Page {} failed: {}", page + 1, e.getMessage());
                 // 오류 발생해도 계속 진행
-                try { Thread.sleep(3000); } catch (InterruptedException ignored) {}
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException ignored) {
+                }
             }
         }
 
         log.info("  📊 Query result: {} new ISBNs, {} duplicates skipped", totalNewIsbns, totalDuplicates);
-        return new int[]{totalNewIsbns, totalDuplicates};
+        return new int[] { totalNewIsbns, totalDuplicates };
     }
 }
