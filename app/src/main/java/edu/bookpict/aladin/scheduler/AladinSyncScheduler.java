@@ -26,8 +26,8 @@ public class AladinSyncScheduler {
     /**
      * 매일 새벽 05:00 KST에 학년별/과목별 참고서 데이터 동기화
      * 
-     * 검색 쿼리 형식: "{학년} {과목} 참고서"
-     * 예) "초등 수학 참고서", "중등 영어 참고서", "고등 과학 참고서"
+     * 검색 쿼리 형식: "{학년} {과목}"
+     * 예) "초등 수학", "중등 영어", "고등 과학"
      */
     @Scheduled(cron = "0 0 5 * * *", zone = "Asia/Seoul")
     public void dailySyncMorning() {
@@ -47,13 +47,13 @@ public class AladinSyncScheduler {
         int totalQueries = 0;
 
         // 초등: 수학, 영어, 국어, 한국사, 세계사
-        totalQueries += syncSchoolLevelSubjects("초등", new String[]{"수학", "영어", "국어", "한국사", "세계사"});
+        totalQueries += syncSchoolLevelSubjects("초등", new String[] { "수학", "영어", "국어", "한국사", "세계사" });
 
         // 중등: 수학, 영어, 국어, 한국사, 세계사
-        totalQueries += syncSchoolLevelSubjects("중등", new String[]{"수학", "영어", "국어", "한국사", "세계사"});
+        totalQueries += syncSchoolLevelSubjects("중등", new String[] { "수학", "영어", "국어", "한국사", "세계사" });
 
         // 고등: 수학, 영어, 국어, 한국사, 세계사
-        totalQueries += syncSchoolLevelSubjects("고등", new String[]{"수학", "영어", "국어", "한국사", "세계사"});
+        totalQueries += syncSchoolLevelSubjects("고등", new String[] { "수학", "영어", "국어", "한국사", "세계사" });
 
         log.info("====================================");
         log.info("✅ Daily Sync Completed ({}): {} total queries processed", label, totalQueries);
@@ -61,33 +61,33 @@ public class AladinSyncScheduler {
     }
 
     /**
-     * 특정 학년의 과목별 참고서 동기화
+     * 특정 학년의 과목별 동기화
      * 
      * @param schoolLevel 학년 (초등, 중등, 고등)
-     * @param subjects 과목 목록
+     * @param subjects    과목 목록
      * @return 처리된 쿼리 개수
      */
     private int syncSchoolLevelSubjects(String schoolLevel, String[] subjects) {
         log.info("📚 Processing {} ({} subjects)...", schoolLevel, subjects.length);
-        
+
         int count = 0;
         for (String subject : subjects) {
             try {
-                // 검색 쿼리: "초등 수학 참고서" 형식
-                String query = schoolLevel + " " + subject + " 참고서";
+                // 검색 쿼리: "초등 수학" 형식
+                String query = schoolLevel + " " + subject;
                 log.info("  ➡️  Query: '{}'", query);
-                
+
                 aladinBookService.searchAndSync(query);
                 count++;
-                
+
                 // API Rate Limit 방지 (1초 딜레이)
                 Thread.sleep(1000);
-                
+
             } catch (Exception e) {
                 log.error("  ❌ Failed to sync {} {}: {}", schoolLevel, subject, e.getMessage());
             }
         }
-        
+
         log.info("  ✅ {} done: {} queries executed", schoolLevel, count);
         return count;
     }
@@ -107,7 +107,7 @@ public class AladinSyncScheduler {
         try {
             // SearchKeyword 테이블에 저장된 키워드들 재처리
             aladinBookService.reprocessSavedKeywords();
-            
+
         } catch (Exception e) {
             log.error("❌ Retry sync failed: {}", e.getMessage(), e);
         }

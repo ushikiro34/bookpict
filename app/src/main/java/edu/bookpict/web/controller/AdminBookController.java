@@ -35,7 +35,7 @@ public class AdminBookController {
 
     @PostMapping("/truncate-and-reimport")
     @Transactional
-    public String truncateAndReimport(@RequestParam(defaultValue = "초등 수학 참고서,초등 영어 참고서,중등 수학 참고서,중등 영어 참고서,고등 수학 참고서") String queries) {
+    public String truncateAndReimport(@RequestParam(defaultValue = "초등 수학,초등 영어,중등 수학,중등 영어,고등 수학") String queries) {
         // 1. Truncate all tables (order matters due to FK)
         log.info("Truncating all book-related tables...");
         popularRankRepository.deleteAllInBatch();

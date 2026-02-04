@@ -125,8 +125,8 @@ public class OneTimeElementarySyncScheduler {
     private List<String> buildSearchQueries(String schoolLevel, String subject) {
         List<String> queries = new ArrayList<>();
 
-        // 1. 기본 쿼리 (참고서 포함)
-        queries.add(schoolLevel + " " + subject + " 참고서");
+        // 1. 기본 쿼리
+        queries.add(schoolLevel + " " + subject);
 
         // 2. 학년별 쿼리 추가
         String[] grades;
@@ -141,7 +141,7 @@ public class OneTimeElementarySyncScheduler {
         }
 
         for (String grade : grades) {
-            queries.add(schoolLevel + " " + subject + " " + grade + " 참고서");
+            queries.add(schoolLevel + " " + subject + " " + grade);
         }
 
         return queries;
