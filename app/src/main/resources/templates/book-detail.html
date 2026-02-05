@@ -17,11 +17,11 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#6a8571",
-                        "accent-orange": "#fb923c",
-                        "olive-cobalt-light": "#f8faf8",
-                        "olive-cobalt-muted": "#8ca391",
-                        "olive-cobalt-dark": "#4a5d4e",
+                        "primary": "#2d3e50",
+                        "accent-orange": "#f97316",
+                        "olive-cobalt-light": "#f8fafc",
+                        "olive-cobalt-muted": "#94a3b8",
+                        "olive-cobalt-dark": "#1e293b",
                     },
                     fontFamily: {
                         "display": ["Plus Jakarta Sans", "sans-serif"]
@@ -33,7 +33,7 @@
 
     <style type="text/tailwindcss">
         :root {
-            --primary-mix: #6a8571;
+            --primary-mix: #2d3e50;
             --soft-mix: #f2f5f2;
             --bg-neutral: #fafbf9;
         }
@@ -78,7 +78,7 @@
         <!-- Aladin Metrics & BookPict Index -->
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-olive-cobalt-muted/10 grid grid-cols-2 gap-4">
             <div class="text-center p-4 bg-primary/5 rounded-xl border border-primary/10">
-                <p class="text-[11px] text-olive-cobalt-muted font-bold mb-1">BookPict 지수</p>
+                <p class="text-[11px] text-olive-cobalt-muted font-bold mb-1">스쿨북스 지수</p>
                 <p class="text-2xl font-black text-primary"
                     th:text="${book.bookPictIndex != null ? #numbers.formatDecimal(book.bookPictIndex, 1, 1) : '-'}">8.5
                 </p>

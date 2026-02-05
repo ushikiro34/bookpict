@@ -22,11 +22,11 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#6a8571",
-                        "accent-orange": "#fb923c",
-                        "olive-cobalt-light": "#f8faf8",
-                        "olive-cobalt-muted": "#8ca391",
-                        "olive-cobalt-dark": "#4a5d4e",
+                        "primary": "#2d3e50",
+                        "accent-orange": "#f97316",
+                        "olive-cobalt-light": "#f8fafc",
+                        "olive-cobalt-muted": "#94a3b8",
+                        "olive-cobalt-dark": "#1e293b",
                     },
                     fontFamily: {
                         "display": ["Plus Jakarta Sans", "sans-serif"]
@@ -44,9 +44,9 @@
 
     <style type="text/tailwindcss">
         :root {
-            --primary-mix: #6a8571;
+            --primary-mix: #2d3e50;
             --soft-mix: #f2f5f2;
-            --accent-orange: #fb923c;
+            --accent-orange: #f97316;
             --bg-neutral: #fafbf9;
         }
         body {
@@ -78,7 +78,30 @@
             <div class="text-primary flex size-10 shrink-0 items-center justify-start">
                 <span class="material-symbols-outlined">menu</span>
             </div>
-            <h2 class="text-primary text-lg font-bold leading-tight tracking-tight flex-1 text-center">교육 참고서 비교</h2>
+            <div class="flex-1 flex items-center justify-center">
+                <div class="relative flex items-center justify-center shrink-0 mr-2" style="width: 28px; height: 28px;">
+                    <!-- Logo Books -->
+                    <div class="absolute" style="width: 12px; height: 12px; top: 18%; left: 18%; z-index: 0;">
+                        <div class="relative w-full h-full">
+                            <div class="absolute top-0 left-0 w-[70%] h-[90%] rounded-sm shadow-sm"
+                                style="background-color: #f97316; border: 1px solid white; transform: rotate(-15deg);">
+                            </div>
+                            <div class="absolute top-1 left-3 w-[70%] h-[90%] rounded-sm shadow-sm"
+                                style="background-color: #2d3e50; border: 1px solid white; transform: rotate(25deg);">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Logo Magnifying Glass -->
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2d3e50" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round" class="relative z-10">
+                        <circle cx="11" cy="11" r="8.5"></circle>
+                        <circle cx="11" cy="11" r="7.25" fill="white" fill-opacity="0.1" stroke="none"></circle>
+                        <line x1="21" y1="21" x2="17.2" y2="17.2" stroke-width="3.5"></line>
+                    </svg>
+                </div>
+                <h2 class="text-primary text-lg font-bold leading-tight tracking-tight uppercase">스쿨북스&nbsp; <span
+                        class="text-accent-orange">|</span>&nbsp; SCHOOLBOOKS</h2>
+            </div>
             <div class="size-10 flex items-center justify-end text-primary">
                 <span class="material-symbols-outlined">shopping_cart</span>
             </div>

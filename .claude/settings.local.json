@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew:*)",
+      "Bash(c:/work/edu-bookpict/gradlew.bat :app:bootRun)",
+      "Bash(powershell:*)"
+    ]
+  }
+}

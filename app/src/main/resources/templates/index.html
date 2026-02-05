@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pick-easy</title>
+    <title>스쿨북스 | SCHOOLBOOKS</title>
 
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
@@ -17,12 +17,12 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#6A8571",
-                        "accent-orange": "#fb923c",
-                        "olive-cobalt-light": "#f8faf8",
-                        "olive-cobalt-muted": "#8ca391",
-                        "olive-cobalt-dark": "#3d4940",
-                        "olive-teal-active": "#6A8571",
+                        "primary": "#2d3e50",
+                        "accent-orange": "#f97316",
+                        "olive-cobalt-light": "#f8fafc",
+                        "olive-cobalt-muted": "#94a3b8",
+                        "olive-cobalt-dark": "#1e293b",
+                        "olive-teal-active": "#2d3e50",
                     },
                     fontFamily: {
                         "display": ["Plus Jakarta Sans", "sans-serif"]
@@ -34,9 +34,9 @@
 
     <style type="text/tailwindcss">
         :root {
-            --primary-mix: #6A8571;
+            --primary-mix: #2d3e50;
             --soft-mix: #f2f5f2;
-            --accent-orange: #fb923c;
+            --accent-orange: #f97316;
             --bg-neutral: #fafbf9;
         }
         body {
@@ -120,10 +120,31 @@
             <div class="size-10 flex items-center justify-start text-primary cursor-pointer" onclick="openHelpModal()">
                 <span class="material-symbols-outlined">help</span>
             </div>
-            <h2
-                class="text-primary text-xl font-black leading-tight tracking-tighter flex-1 text-center font-outfit uppercase">
-                pick-easy
-            </h2>
+            <div class="flex-1 flex items-center justify-center">
+                <div class="relative flex items-center justify-center shrink-0 mr-3" style="width: 32px; height: 32px;">
+                    <!-- Logo Books -->
+                    <div class="absolute" style="width: 14px; height: 14px; top: 18%; left: 18%; z-index: 0;">
+                        <div class="relative w-full h-full">
+                            <div class="absolute top-0 left-0 w-[70%] h-[90%] rounded-sm shadow-sm"
+                                style="background-color: #f97316; border: 1px solid white; transform: rotate(-15deg);">
+                            </div>
+                            <div class="absolute top-1 left-3 w-[70%] h-[90%] rounded-sm shadow-sm"
+                                style="background-color: #2d3e50; border: 1px solid white; transform: rotate(25deg);">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Logo Magnifying Glass -->
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2d3e50" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round" class="relative z-10">
+                        <circle cx="11" cy="11" r="8.5"></circle>
+                        <circle cx="11" cy="11" r="7.25" fill="white" fill-opacity="0.1" stroke="none"></circle>
+                        <line x1="21" y1="21" x2="17.2" y2="17.2" stroke-width="3.5"></line>
+                    </svg>
+                </div>
+                <h2 class="text-primary text-xl font-bold leading-tight tracking-[-0.02em] uppercase">
+                    스쿨북스&nbsp; <span class="text-accent-orange">|</span>&nbsp; SCHOOLBOOKS
+                </h2>
+            </div>
             <div class="size-10 flex items-center justify-end text-primary cursor-pointer"
                 onclick="resetAllAndReload()">
                 <span class="material-symbols-outlined">refresh</span>
@@ -161,7 +182,7 @@
                     참고서 목록
                 </button>
                 <button id="tab-btn-history" class="flex-1 py-1.5 text-sm font-semibold rounded-lg transition-all"
-                    th:classappend="${activeTab == 'history'} ? 'bg-olive-teal-active text-white shadow-sm' : 'text-olive-cobalt-muted'"
+                    th:classappend="${activeTab == 'history'} ? 'bg-primary text-white shadow-sm' : 'text-olive-cobalt-muted'"
                     onclick="switchTab('history')">
                     검색 이력
                 </button>
@@ -213,7 +234,7 @@
         <div class="px-4 pb-2">
             <div id="top3-container" class="mt-3 px-1" th:style="${activeTab == 'history'} ? 'display:none' : ''">
                 <p class="text-xs font-bold text-primary mb-2">판매량 TOP 3</p>
-                <div class="rounded-xl p-3" style="border: 1.5px solid #6A8571;">
+                <div class="rounded-xl p-3" style="border: 1.5px solid #2d3e50;">
                     <!-- 실제 TOP 3 (필터 적용 시) -->
                     <div th:if="${topBooks != null and !topBooks.isEmpty()}" class="grid grid-cols-3 gap-3">
                         <div th:each="topBook, iterStat : ${topBooks}" class="flex flex-col items-center cursor-pointer"
@@ -434,7 +455,7 @@
 
                                     <div th:if="${book.categoryName != null}"
                                         class="text-center text-[11px] text-primary font-medium py-2 px-4 rounded-lg truncate"
-                                        style="background-color: #E1F7E0;">
+                                        style="background-color: #f1f5f9">
                                         <span th:text="${book.categoryName}">카테고리</span>
                                     </div>
 
@@ -493,10 +514,10 @@
     <footer
         class="fixed bottom-0 left-0 right-0 z-30 px-6 py-2.5 text-center border-t border-olive-cobalt-muted/10 bg-white/90 backdrop-blur-md">
         <p class="text-[10px] text-olive-cobalt-muted/70 leading-snug">
-            pick-easy는 참고서 비교를 돕는 정보 제공 서비스입니다.<br>
+            스쿨북스 는 참고서 비교를 돕는 정보 제공 서비스입니다.<br>
             판매 가격 및 재고 정보는 각 판매처의 실제 정보와 다를 수 있습니다.
         </p>
-        <p class="text-[9px] text-olive-cobalt-muted/50 mt-1">&copy; 2026 pick-easy. All rights reserved.</p>
+        <p class="text-[9px] text-olive-cobalt-muted/50 mt-1">&copy; 2026 스쿨북스. All rights reserved.</p>
     </footer>
 
     <script>
@@ -553,7 +574,7 @@
                 if (filterGuide) filterGuide.style.display = 'none';
                 if (top3Container) top3Container.style.display = 'none';
                 booksBtn.className = 'flex-1 py-1.5 text-sm font-bold rounded-lg transition-all text-olive-cobalt-muted';
-                historyBtn.className = 'flex-1 py-1.5 text-sm font-semibold rounded-lg transition-all bg-olive-teal-active text-white shadow-sm';
+                historyBtn.className = 'flex-1 py-1.5 text-sm font-semibold rounded-lg transition-all bg-primary text-white shadow-sm';
             }
         }
 
@@ -647,7 +668,7 @@
             const badgeColors = ['bg-yellow-500', 'bg-gray-400', 'bg-amber-700'];
             container.innerHTML = `
                 <p class="text-xs font-bold text-primary mb-2">판매량 TOP 3</p>
-                <div class="rounded-xl p-3" style="border: 1.5px solid #6A8571;">
+                <div class="rounded-xl p-3" style="border: 1.5px solid #2d3e50;">
                     <div class="grid grid-cols-3 gap-3">
                         ${topBooks.map((book, i) => `
                             <div class="flex flex-col items-center cursor-pointer" onclick="scrollToBookCard('${book.bookId}')">
@@ -670,7 +691,7 @@
             if (!container) return;
             container.innerHTML = `
                 <p class="text-xs font-bold text-primary mb-2">판매량 TOP 3</p>
-                <div class="rounded-xl p-3" style="border: 1.5px solid #6A8571;">
+                <div class="rounded-xl p-3" style="border: 1.5px solid #2d3e50;">
                     <div class="grid grid-cols-3 gap-3">
                         ${[1, 2, 3].map(() => `
                             <div class="flex flex-col items-center">
@@ -691,7 +712,7 @@
             container.innerHTML = `
                 <div class="flex flex-col items-center justify-center py-16 text-olive-cobalt-muted">
                     <span class="material-symbols-outlined text-5xl text-olive-cobalt-muted/30 mb-3">filter_alt</span>
-                    <p class="text-sm font-semibold text-olive-cobalt-dark/60">조건을 선택해 주세요</p>
+                    <p class="text-sm font-semibold text-olive-cobalt-dark/60">조회 결과가 없어요.</p>
                     <p class="text-xs text-olive-cobalt-muted/60 mt-1">과목, 학교급 등 필터를 선택하면 참고서가 표시됩니다.</p>
                 </div>
             `;
@@ -893,7 +914,7 @@
                                     </div>
                                 </div>
 
-                                ${book.categoryName ? `<div class="text-center text-[11px] text-primary font-medium py-2 px-4 rounded-lg truncate" style="background-color: #E1F7E0;">
+                                ${book.categoryName ? `<div class="text-center text-[11px] text-primary font-medium py-2 px-4 rounded-lg truncate" style="background-color: #f1f5f9;">
                                     ${book.categoryName}
                                 </div>` : ''}
 
@@ -1108,7 +1129,7 @@
             class="relative bg-white rounded-3xl overflow-hidden shadow-2xl transform transition-all flex flex-col"
             style="width:80%;max-width:80%;height:70%;max-height:70%;" onclick="event.stopPropagation()">
             <div class="px-6 py-4 border-b border-olive-cobalt-muted/10 shrink-0 flex justify-between items-center">
-                <h3 class="text-base font-bold text-primary">pick-easy 이용 안내</h3>
+                <h3 class="text-base font-bold text-primary">스쿨북스 이용 안내</h3>
                 <button onclick="closeHelpModal()"
                     class="material-symbols-outlined text-olive-cobalt-muted">close</button>
             </div>
@@ -1116,7 +1137,7 @@
                 <div id="help-content">
                     <div>
                         <p class="text-xs text-olive-cobalt-muted leading-relaxed">
-                            • pick-easy 는<br>
+                            • 스쿨북스 는<br>
                             초·중·고 참고서를 과목, 학년, 학기별로 비교하고
                             판매처별 구매 정보를 한눈에 볼 수 있도록 돕는
                             참고서 비교 검색 서비스입니다.
@@ -1133,7 +1154,7 @@
                     <br />
                     <div class="border-t border-olive-cobalt-muted/20 pt-4">
                         <p class="text-xs text-olive-cobalt-muted leading-relaxed">
-                            • pick-easy는 현재 베타 서비스로 운영 중입니다.<br>
+                            • 스쿨북스는 현재 베타 서비스로 운영 중입니다.<br>
                             이용 중 불편사항이나 개선 의견은
                             추후 제공될 피드백 채널을 통해 전달해 주세요.
                         </p>
