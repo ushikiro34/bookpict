@@ -543,10 +543,10 @@
             <div class="flex items-center justify-center gap-2 mt-1">
                 <p class="text-[9px] text-olive-cobalt-muted/50">&copy; 2026 스쿨북스. All rights reserved.</p>
                 <span class="text-[9px] text-olive-cobalt-muted/30">|</span>
-                <a href="/terms"
+                <a href="/terms" onclick="handleFooterLink(event, '/terms')"
                     class="text-[9px] text-olive-cobalt-muted/70 hover:text-primary font-medium underline underline-offset-2">이용약관</a>
                 <span class="text-[9px] text-olive-cobalt-muted/30">|</span>
-                <a href="/privacy"
+                <a href="/privacy" onclick="handleFooterLink(event, '/privacy')"
                     class="text-[9px] text-olive-cobalt-muted/70 hover:text-primary font-medium underline underline-offset-2">개인정보처리방침</a>
             </div>
         </footer>
@@ -1102,30 +1102,64 @@
             }, { passive: true });
 
             // Handle modal opening via URL (Thymeleaf model attribute)
-            const openModal = "[[${openModal}]]";
-            if (openModal === 'terms') {
-                openTermsModal();
-            } else if (openModal === 'privacy') {
-                openPrivacyModal();
+            const openModalFromModel = "[[${openModal}]]";
+            if (openModalFromModel === 'terms') {
+                openTermsModal(true);
+            } else if (openModalFromModel === 'privacy') {
+                openPrivacyModal(true);
             }
+
+            // Listen for browser back/forward buttons
+            window.addEventListener('popstate', function (event) {
+                const path = window.location.pathname;
+                if (path === '/terms') {
+                    openTermsModal(true);
+                } else if (path === '/privacy') {
+                    openPrivacyModal(true);
+                } else {
+                    closeTermsModal(true);
+                    closePrivacyModal(true);
+                }
+            });
         });
 
-        function openTermsModal() {
+        function handleFooterLink(event, path) {
+            event.preventDefault();
+            if (path === '/terms') {
+                openTermsModal();
+            } else if (path === '/privacy') {
+                openPrivacyModal();
+            }
+        }
+
+        function openTermsModal(skipPush = false) {
+            if (!skipPush) {
+                history.pushState({ modal: 'terms' }, '', '/terms');
+            }
             document.getElementById('terms-modal-overlay').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
 
-        function closeTermsModal() {
+        function closeTermsModal(skipReplace = false) {
+            if (!skipReplace && window.location.pathname === '/terms') {
+                history.pushState(null, '', '/');
+            }
             document.getElementById('terms-modal-overlay').classList.add('hidden');
             document.body.style.overflow = 'auto';
         }
 
-        function openPrivacyModal() {
+        function openPrivacyModal(skipPush = false) {
+            if (!skipPush) {
+                history.pushState({ modal: 'privacy' }, '', '/privacy');
+            }
             document.getElementById('privacy-modal-overlay').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
 
-        function closePrivacyModal() {
+        function closePrivacyModal(skipReplace = false) {
+            if (!skipReplace && window.location.pathname === '/privacy') {
+                history.pushState(null, '', '/');
+            }
             document.getElementById('privacy-modal-overlay').classList.add('hidden');
             document.body.style.overflow = 'auto';
         }
