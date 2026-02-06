@@ -34,21 +34,53 @@ public class PageController {
             @RequestParam(required = false) String subject,
             @RequestParam(required = false) String schoolLevel,
             @RequestParam(required = false) String grade,
-            Model model, 
+            Model model,
             HttpSession session) {
-        
+
+        populateIndexModel(subject, schoolLevel, grade, model, session);
+        return "index";
+    }
+
+    @GetMapping("/privacy")
+    public String privacy(
+            @RequestParam(required = false) String subject,
+            @RequestParam(required = false) String schoolLevel,
+            @RequestParam(required = false) String grade,
+            Model model,
+            HttpSession session) {
+
+        populateIndexModel(subject, schoolLevel, grade, model, session);
+        model.addAttribute("openModal", "privacy");
+        return "index";
+    }
+
+    @GetMapping("/terms")
+    public String terms(
+            @RequestParam(required = false) String subject,
+            @RequestParam(required = false) String schoolLevel,
+            @RequestParam(required = false) String grade,
+            Model model,
+            HttpSession session) {
+
+        populateIndexModel(subject, schoolLevel, grade, model, session);
+        model.addAttribute("openModal", "terms");
+        return "index";
+    }
+
+    private void populateIndexModel(String subject, String schoolLevel, String grade, Model model,
+            HttpSession session) {
         // ✅ 필터가 하나라도 있으면 필터 적용, 모두 없으면 빈 목록 (초기 화면 조회 안함)
         List<BookListDto> books;
         boolean hasAnyFilter = (subject != null && !subject.isEmpty()) ||
-                               (schoolLevel != null && !schoolLevel.isEmpty()) ||
-                               (grade != null && !grade.isEmpty());
+                (schoolLevel != null && !schoolLevel.isEmpty()) ||
+                (grade != null && !grade.isEmpty());
 
         if (!hasAnyFilter) {
             books = Collections.emptyList();
         } else {
             books = bookService.getBooks(subject, schoolLevel, grade);
         }
-        
+
         List<String> recentSearches = searchService.getRecentSearches(session.getId());
 
         // TOP 3 판매량 순위 (bestsellerRank 기준, 낮을수록 상위)
@@ -67,8 +99,6 @@ public class PageController {
         model.addAttribute("selectedSubject", subject);
         model.addAttribute("selectedSchoolLevel", schoolLevel);
         model.addAttribute("selectedGrade", grade);
-
-        return "index";
     }
 
     @GetMapping("/search")
