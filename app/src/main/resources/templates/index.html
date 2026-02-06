@@ -55,7 +55,8 @@
             overflow: hidden;
         }
 
-        #book-modal-overlay {
+        /* Global Modal Overlay Style */
+        [id$="-modal-overlay"] {
             backdrop-filter: blur(8px);
             transition: all 0.3s ease;
         }
@@ -121,13 +122,15 @@
                 <span class="material-symbols-outlined">help</span>
             </div>
             <div class="flex-1 flex flex-col items-center justify-center">
-                <h1 class="text-2xl font-bold tracking-[-0.08em] leading-[0.9] text-primary">스쿨북스</h1>
-                <div class="flex items-center w-[110px] mt-0.5">
-                    <div class="flex-grow h-[2px] bg-accent-orange rounded-full mr-2 opacity-80"></div>
-                    <p class="text-[10px] font-extrabold text-slate-400 lowercase tracking-[-0.02em] opacity-70"
-                        style="transform: scaleY(1.1); transform-origin: bottom;">
-                        schoolbooks
-                    </p>
+                <div class="inline-flex flex-col items-center">
+                    <h1 class="text-2xl font-bold tracking-[-0.08em] leading-[0.9] text-primary">스쿨북스</h1>
+                    <div class="flex items-center w-full mt-0.5">
+                        <div class="flex-grow h-[2px] bg-accent-orange rounded-full mr-1.5 opacity-80"></div>
+                        <p class="text-[10px] font-extrabold text-slate-400 lowercase tracking-[-0.02em] opacity-70"
+                            style="transform: scaleY(1.1); transform-origin: bottom;">
+                            schoolbooks
+                        </p>
+                    </div>
                 </div>
             </div>
             <div class="size-10 flex items-center justify-end text-primary cursor-pointer"
@@ -499,10 +502,18 @@
     <footer
         class="fixed bottom-0 left-0 right-0 z-30 px-6 py-2.5 text-center border-t border-olive-cobalt-muted/10 bg-white/90 backdrop-blur-md">
         <p class="text-[10px] text-olive-cobalt-muted/70 leading-snug">
-            스쿨북스 는 참고서 비교를 돕는 정보 제공 서비스입니다.<br>
-            판매 가격 및 재고 정보는 각 판매처의 실제 정보와 다를 수 있습니다.
+            스쿨북스는 참고서 검색 및 비교를 돕는 정보 제공 서비스입니다.<br>
+            본 서비스에는 광고 및 제휴 링크가 포함될 수 있습니다.
         </p>
-        <p class="text-[9px] text-olive-cobalt-muted/50 mt-1">&copy; 2026 스쿨북스. All rights reserved.</p>
+        <div class="flex items-center justify-center gap-2 mt-1">
+            <p class="text-[9px] text-olive-cobalt-muted/50">&copy; 2026 스쿨북스. All rights reserved.</p>
+            <span class="text-[9px] text-olive-cobalt-muted/30">|</span>
+            <button onclick="openTermsModal()"
+                class="text-[9px] text-olive-cobalt-muted/70 hover:text-primary font-medium underline underline-offset-2">이용약관</button>
+            <span class="text-[9px] text-olive-cobalt-muted/30">|</span>
+            <button onclick="openPrivacyModal()"
+                class="text-[9px] text-olive-cobalt-muted/70 hover:text-primary font-medium underline underline-offset-2">개인정보처리방침</button>
+        </div>
     </footer>
 
     <script>
@@ -1054,6 +1065,26 @@
                 }
             }, { passive: true });
         });
+
+        function openTermsModal() {
+            document.getElementById('terms-modal-overlay').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeTermsModal() {
+            document.getElementById('terms-modal-overlay').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function openPrivacyModal() {
+            document.getElementById('privacy-modal-overlay').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePrivacyModal() {
+            document.getElementById('privacy-modal-overlay').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
     </script>
 
     <!-- Detail Modal -->
@@ -1079,8 +1110,7 @@
     </div>
 
     <!-- Thumbnail Modal (Accordion Only) -->
-    <div id="thumbnail-modal-overlay"
-        class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center backdrop-blur-sm"
+    <div id="thumbnail-modal-overlay" class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center"
         onclick="closeThumbnailModal()">
         <div class="relative flex flex-col items-center" onclick="event.stopPropagation()">
             <button onclick="closeThumbnailModal()"
@@ -1144,6 +1174,188 @@
                             추후 제공될 피드백 채널을 통해 전달해 주세요.
                         </p>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Terms of Use Modal -->
+    <div id="terms-modal-overlay" class="fixed inset-0 z-50 bg-black/30 hidden flex items-center justify-center px-4"
+        onclick="closeTermsModal()">
+        <div id="terms-modal"
+            class="relative bg-white rounded-3xl overflow-hidden shadow-2xl transform transition-all flex flex-col"
+            style="width:90%;max-width:500px;height:80%;max-height:600px;" onclick="event.stopPropagation()">
+            <div class="px-6 py-4 border-b border-olive-cobalt-muted/10 shrink-0 flex justify-between items-center">
+                <h3 class="text-base font-bold text-primary">이용약관</h3>
+                <button onclick="closeTermsModal()"
+                    class="material-symbols-outlined text-olive-cobalt-muted">close</button>
+            </div>
+            <div
+                class="p-6 overflow-y-auto space-y-4 no-scrollbar flex-1 text-sm text-olive-cobalt-dark leading-relaxed">
+                <div class="space-y-4">
+                    <p>본 약관은 스쿨북스(이하 “본 서비스”)가 제공하는 서비스의 이용과 관련하여, 서비스와 이용자 간의 권리·의무 및 책임사항을 규정함을 목적으로 합니다.</p>
+
+                    <section>
+                        <h4 class="font-bold text-primary mb-1">제1조 (목적)</h4>
+                        <p>본 약관은 본 서비스가 제공하는 참고서 정보 검색 및 비교 서비스의 이용 조건 및 절차, 이용자와 서비스 간의 권리·의무 및 책임사항을 규정함을 목적으로 합니다.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h4 class="font-bold text-primary mb-1">제2조 (서비스의 내용)</h4>
+                        <p>본 서비스는 다음과 같은 서비스를 제공합니다.</p>
+                        <ul class="list-disc ml-5 mt-1 space-y-1">
+                            <li>참고서 및 교재 정보 제공</li>
+                            <li>판매처 링크 및 가격 비교 정보 제공</li>
+                            <li>기타 본 서비스가 정하는 정보 제공 서비스</li>
+                        </ul>
+                        <p class="mt-1">본 서비스에서 제공되는 정보는 참고용이며, 실제 판매 가격, 재고 및 상세 정보는 각 판매처의 정보를 기준으로 합니다.</p>
+                    </section>
+
+                    <section>
+                        <h4 class="font-bold text-primary mb-1">제3조 (서비스 이용)</h4>
+                        <ul class="list-disc ml-5 mt-1 space-y-1">
+                            <li>본 서비스는 회원가입 없이 자유롭게 이용할 수 있습니다.</li>
+                            <li>이용자는 본 약관 및 관련 법령을 준수하여야 합니다.</li>
+                            <li>본 서비스는 상업적 목적의 무단 이용을 제한할 수 있습니다.</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h4 class="font-bold text-primary mb-1">제4조 (서비스 제공의 변경 및 중단)</h4>
+                        <p>본 서비스는 운영상 또는 기술상의 필요에 따라 서비스의 전부 또는 일부를 변경하거나 중단할 수 있습니다.</p>
+                        <p>서비스 변경 또는 중단으로 인하여 이용자에게 발생한 손해에 대해 본 서비스는 책임을 지지 않습니다. 다만, 고의 또는 중대한 과실이 있는 경우는 예외로 합니다.</p>
+                    </section>
+
+                    <section>
+                        <h4 class="font-bold text-primary mb-1">제5조 (저작권)</h4>
+                        <p>본 서비스에 포함된 콘텐츠(텍스트, UI 구성, 데이터 정리 방식 등)의 저작권은 본 서비스 또는 정당한 권리자에게 귀속됩니다.</p>
+                        <p>이용자는 본 서비스의 콘텐츠를 무단으로 복제, 배포, 가공, 상업적으로 이용할 수 없습니다.</p>
+                    </section>
+
+                    <section>
+                        <h4 class="font-bold text-primary mb-1">제6조 (외부 링크에 대한 책임)</h4>
+                        <p>본 서비스는 외부 사이트로 연결되는 링크를 포함할 수 있으며, 외부 사이트에서 제공하는 서비스 및 정보에 대해서는 본 서비스가 책임지지 않습니다.</p>
+                    </section>
+
+                    <section>
+                        <h4 class="font-bold text-primary mb-1">제7조 (광고 및 제휴)</h4>
+                        <p>본 서비스는 광고 또는 제휴 마케팅을 포함할 수 있습니다.</p>
+                        <p>이용자가 광고 또는 제휴 링크를 통해 외부 사이트를 이용하는 경우, 해당 서비스는 각 외부 사업자의 약관 및 정책을 따릅니다.</p>
+                        <p>본 서비스는 광고 및 제휴 활동으로 수익을 얻을 수 있습니다.</p>
+                    </section>
+
+                    <section>
+                        <h4 class="font-bold text-primary mb-1">제8조 (책임의 제한)</h4>
+                        <p>본 서비스는 제공하는 정보의 정확성, 완전성, 신뢰성에 대해 보증하지 않습니다.</p>
+                        <p>이용자가 본 서비스를 이용함으로써 발생한 손해에 대해 본 서비스는 책임을 지지 않습니다.</p>
+                        <p>본 서비스는 이용자의 서비스 이용 환경, 기기, 네트워크 문제로 인한 손해에 대해 책임을 지지 않습니다.</p>
+                    </section>
+
+                    <section>
+                        <h4 class="font-bold text-primary mb-1">제9조 (약관의 변경)</h4>
+                        <p>본 약관은 관련 법령 또는 서비스 정책 변경에 따라 수정될 수 있으며, 변경 시 본 서비스 내 공지 또는 본 페이지를 통해 안내합니다.</p>
+                    </section>
+
+                    <section>
+                        <h4 class="font-bold text-primary mb-1">제10조 (준거법 및 관할)</h4>
+                        <p>본 약관은 대한민국 법률을 준거법으로 하며, 본 서비스와 이용자 간에 발생한 분쟁에 대해서는 대한민국 법원을 관할 법원으로 합니다.</p>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="privacy-modal-overlay" class="fixed inset-0 z-50 bg-black/30 hidden flex items-center justify-center px-4"
+        onclick="closePrivacyModal()">
+        <div id="privacy-modal"
+            class="relative bg-white rounded-3xl overflow-hidden shadow-2xl transform transition-all flex flex-col"
+            style="width:90%;max-width:500px;height:80%;max-height:600px;" onclick="event.stopPropagation()">
+            <div class="px-6 py-4 border-b border-olive-cobalt-muted/10 shrink-0 flex justify-between items-center">
+                <h3 class="text-base font-bold text-primary">개인정보처리방침</h3>
+                <button onclick="closePrivacyModal()"
+                    class="material-symbols-outlined text-olive-cobalt-muted">close</button>
+            </div>
+            <div
+                class="p-6 overflow-y-auto space-y-4 no-scrollbar flex-1 text-sm text-olive-cobalt-dark leading-relaxed">
+                <div class="space-y-4">
+                    <p>스쿨북스(이하 “본 서비스”)는 이용자의 개인정보를 중요하게 생각하며, 「개인정보 보호법」 등 관련 법령을 준수합니다. 본 개인정보처리방침은 본 서비스가 어떤 정보를
+                        수집하고, 어떻게 이용·보관·보호하는지를 설명합니다.</p>
+
+                    <section>
+                        <h4 class="font-bold text-primary mb-1">1. 수집하는 개인정보 항목</h4>
+                        <p>본 서비스는 회원가입을 받지 않으며, 아래와 같은 최소한의 정보만 자동으로 수집할 수 있습니다.</p>
+                        <ul class="list-disc ml-5 mt-1 space-y-1">
+                            <li>접속 IP 주소</li>
+                            <li>브라우저 종류, 운영체제 정보</li>
+                            <li>접속 일시, 이용 기록</li>
+                            <li>검색어(익명)</li>
+                            <li>쿠키(Cookie): 광고 제공 및 서비스 개선을 위해 사용될 수 있습니다.</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h4 class="font-bold text-primary mb-1">2. 개인정보의 수집 및 이용 목적</h4>
+                        <p>본 서비스는 수집한 개인정보를 다음 목적에 한하여 이용합니다.</p>
+                        <ul class="list-disc ml-5 mt-1 space-y-1">
+                            <li>서비스 제공 및 정상 운영</li>
+                            <li>검색 기능 및 사용자 경험 개선</li>
+                            <li>서비스 이용 통계 분석</li>
+                            <li>맞춤형 광고 제공</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h4 class="font-bold text-primary mb-1">3. 개인정보의 보관 및 이용 기간</h4>
+                        <ul class="list-disc ml-5 mt-1 space-y-1">
+                            <li>접속 로그 및 이용 기록: 일정 기간 보관 후 자동 삭제</li>
+                            <li>쿠키 정보: 이용자의 브라우저 설정에 따라 관리 또는 삭제 가능</li>
+                        </ul>
+                        <p class="mt-1">본 서비스는 개인정보 수집 및 이용 목적이 달성된 후에는 해당 정보를 지체 없이 파기합니다.</p>
+                    </section>
+
+                    <section>
+                        <h4 class="font-bold text-primary mb-1">4. 개인정보의 제3자 제공</h4>
+                        <p>본 서비스는 이용자의 개인정보를 원칙적으로 외부에 제공하지 않습니다. 다만, 다음의 경우에는 예외로 합니다.</p>
+                        <ul class="list-disc ml-5 mt-1 space-y-1">
+                            <li>법령에 따른 요구가 있는 경우</li>
+                            <li>광고 서비스 제공 과정에서 광고 플랫폼(Google 등)을 통해 비식별 정보가 수집될 수 있음</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h4 class="font-bold text-primary mb-1">5. 광고 및 외부 서비스 이용 안내</h4>
+                        <p>본 서비스는 다음과 같은 외부 서비스를 사용할 수 있습니다.</p>
+                        <ul class="list-disc ml-5 mt-1 space-y-1">
+                            <li>Google AdSense 등 광고 서비스</li>
+                            <li>외부 서점 및 쇼핑몰(알라딘, 교보문고, 쿠팡 등) 링크</li>
+                        </ul>
+                        <p class="mt-1">이 과정에서 각 외부 서비스는 자체적인 개인정보처리방침을 따르며, 본 서비스는 외부 사이트의 개인정보 처리에 대해 책임지지 않습니다.</p>
+                    </section>
+
+                    <section>
+                        <h4 class="font-bold text-primary mb-1">6. 이용자의 권리</h4>
+                        <p>이용자는 브라우저 설정을 통해 쿠키 저장을 거부하거나 삭제할 수 있습니다. 쿠키 저장을 거부할 경우 일부 서비스 이용에 제한이 있을 수 있습니다.</p>
+                    </section>
+
+                    <section>
+                        <h4 class="font-bold text-primary mb-1">7. 개인정보 보호를 위한 조치</h4>
+                        <ul class="list-disc ml-5 mt-1 space-y-1">
+                            <li>개인정보 최소 수집 원칙 준수</li>
+                            <li>서버 접근 제한 및 관리</li>
+                            <li>불필요한 개인정보 저장 금지</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h4 class="font-bold text-primary mb-1">8. 개인정보처리방침 변경</h4>
+                        <p>본 개인정보처리방침은 법령 또는 서비스 변경에 따라 수정될 수 있으며, 변경 시 본 페이지를 통해 공지합니다.</p>
+                    </section>
+
+                    <section>
+                        <h4 class="font-bold text-primary mb-1">9. 문의처</h4>
+                        <p>개인정보와 관련한 문의사항이 있을 경우 아래를 통해 연락하실 수 있습니다.</p>
+                        <p class="mt-1 font-medium italic">서비스명: 스쿨북스</p>
+                        <p>문의: [운영자 이메일 또는 문의 수단 기재]</p>
+                    </section>
                 </div>
             </div>
         </div>
