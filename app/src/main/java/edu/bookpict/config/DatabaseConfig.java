@@ -21,7 +21,11 @@ public class DatabaseConfig {
 
     @Bean
     public DataSource dataSource() {
-        String databaseUrl = System.getenv("DATABASE_URL");
+        // PUBLIC URL 우선 사용 (internal DNS 문제 방지)
+        String databaseUrl = System.getenv("DATABASE_PUBLIC_URL");
+        if (databaseUrl == null || databaseUrl.isBlank()) {
+            databaseUrl = System.getenv("DATABASE_URL");
+        }
         String pgHost = System.getenv("PGHOST");
         String pgPort = System.getenv("PGPORT");
         String pgDatabase = System.getenv("PGDATABASE");
