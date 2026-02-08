@@ -17,14 +17,16 @@ public class DatabaseConfig {
     @Bean
     public DataSource dataSource() {
         String databaseUrl = System.getenv("DATABASE_URL");
-        log.info("DATABASE_URL present: {}, length: {}",
-                databaseUrl != null, databaseUrl != null ? databaseUrl.length() : 0);
+        String pgUser = System.getenv("PGUSER");
+        String pgPassword = System.getenv("PGPASSWORD");
+
+        log.info("DATABASE_URL present: {}, PGUSER present: {}", databaseUrl != null, pgUser != null);
 
         if (databaseUrl == null || databaseUrl.isBlank()) {
             throw new IllegalStateException("DATABASE_URL environment variable is not set");
         }
 
-        // jdbc: prefix가 이미 붙어있으면 제거
+        // jdbc: prefix 제거
         if (databaseUrl.startsWith("jdbc:")) {
             databaseUrl = databaseUrl.substring(5);
         }
@@ -34,19 +36,28 @@ public class DatabaseConfig {
             databaseUrl = "postgresql" + databaseUrl.substring("postgres".length());
         }
 
-        log.info("Parsed URL scheme: {}", databaseUrl.substring(0, Math.min(15, databaseUrl.length())));
-
         URI uri = URI.create(databaseUrl);
 
         String jdbcUrl = "jdbc:postgresql://" + uri.getHost() + ":" + uri.getPort() + uri.getPath();
-        String[] userInfo = uri.getUserInfo().split(":");
 
-        log.info("JDBC URL: jdbc:postgresql://{}:{}{}", uri.getHost(), uri.getPort(), uri.getPath());
+        // user/password: URL에 포함되어 있으면 사용, 없으면 PGUSER/PGPASSWORD 사용
+        String username;
+        String password;
+        if (uri.getUserInfo() != null && uri.getUserInfo().contains(":")) {
+            String[] userInfo = uri.getUserInfo().split(":");
+            username = userInfo[0];
+            password = userInfo[1];
+        } else {
+            username = pgUser;
+            password = pgPassword;
+        }
+
+        log.info("JDBC URL: jdbc:postgresql://{}:{}{}, user: {}", uri.getHost(), uri.getPort(), uri.getPath(), username);
 
         HikariDataSource ds = new HikariDataSource();
         ds.setJdbcUrl(jdbcUrl);
-        ds.setUsername(userInfo[0]);
-        ds.setPassword(userInfo[1]);
+        ds.setUsername(username);
+        ds.setPassword(password);
         ds.setMaximumPoolSize(5);
         ds.setDriverClassName("org.postgresql.Driver");
 
