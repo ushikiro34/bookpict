@@ -3,7 +3,8 @@
     "allow": [
       "Bash(./gradlew:*)",
       "Bash(c:/work/edu-bookpict/gradlew.bat :app:bootRun)",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "Bash(npx create-next-app@latest:*)"
     ]
   }
 }
