@@ -33,9 +33,11 @@ public interface BookRepository extends JpaRepository<Book, String> {
         List<Book> searchByKeyword(@Param("keyword") String keyword);
 
         /**
-         * ✅ 랜덤으로 최대 10개의 도서 조회
-         * ORDER BY RAND() 사용 - 데이터베이스마다 다름 (H2: RAND(), MySQL: RAND())
+         * 랜덤으로 최대 10개의 도서 조회 (Java 셔플 - DB 종류 무관)
          */
-        @Query(value = "SELECT * FROM book ORDER BY RAND() LIMIT 10", nativeQuery = true)
-        List<Book> findRandomBooks();
+        default List<Book> findRandomBooks() {
+                List<Book> all = findAll();
+                java.util.Collections.shuffle(all);
+                return all.stream().limit(10).collect(java.util.stream.Collectors.toList());
+        }
 }
