@@ -23,7 +23,7 @@ server:
 
 aladin:
   api:
-    key: ${ALADIN_API_KEY}
+    key: ${ALADIN_API_KEY:ttbushikiro0222001}
     base-url: http://www.aladin.co.kr/ttb/api
 
 admin:
