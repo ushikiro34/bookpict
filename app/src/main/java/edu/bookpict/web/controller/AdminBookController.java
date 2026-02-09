@@ -5,7 +5,9 @@ import edu.bookpict.domain.book.repository.AladinSnapshotRepository;
 import edu.bookpict.domain.book.repository.BookRepository;
 import edu.bookpict.domain.book.repository.EditionRepository;
 import edu.bookpict.domain.book.repository.IsbnRepository;
+import edu.bookpict.domain.ranking.repository.BookIsbnLinkRepository;
 import edu.bookpict.domain.ranking.repository.PopularRankRepository;
+import edu.bookpict.domain.ranking.repository.SalesRankingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,8 @@ public class AdminBookController {
     private final EditionRepository editionRepository;
     private final AladinSnapshotRepository aladinSnapshotRepository;
     private final PopularRankRepository popularRankRepository;
+    private final SalesRankingRepository salesRankingRepository;
+    private final BookIsbnLinkRepository bookIsbnLinkRepository;
 
     @PostMapping("/reprocess-grade")
     public String reprocessGrades() {
@@ -38,6 +42,8 @@ public class AdminBookController {
     public String truncateAndReimport(@RequestParam(defaultValue = "초등 수학,초등 영어,중등 수학,중등 영어,고등 수학") String queries) {
         // 1. Truncate all tables (order matters due to FK)
         log.info("Truncating all book-related tables...");
+        salesRankingRepository.deleteAllInBatch();
+        bookIsbnLinkRepository.deleteAllInBatch();
         popularRankRepository.deleteAllInBatch();
         editionRepository.deleteAllInBatch();
         aladinSnapshotRepository.deleteAllInBatch();
