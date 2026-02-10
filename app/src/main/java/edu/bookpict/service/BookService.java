@@ -93,11 +93,10 @@ public class BookService {
                                 .collect(Collectors.toList());
                 }
 
-                // 학기 필터 적용 (선택한 학기 + "전체" 도서 포함)
+                // 학기 필터 적용
                 if (sem != null && !sem.isEmpty()) {
                         books = books.stream()
-                                .filter(book -> book.getSemester() != null &&
-                                        (book.getSemester().equals(sem) || book.getSemester().equals("\uC804\uCCB4")))
+                                .filter(book -> book.getSemester() != null && book.getSemester().equals(sem))
                                 .collect(Collectors.toList());
                 }
 
