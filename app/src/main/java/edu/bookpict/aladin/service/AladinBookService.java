@@ -635,17 +635,19 @@ public class AladinBookService {
         int updated = 0;
         for (edu.bookpict.domain.book.Book book : bookRepository.findAll()) {
             edu.bookpict.aladin.parser.GradeParser.GradeInfo gradeInfo = edu.bookpict.aladin.parser.GradeParser.detectGrade(
-                    book.getSubject() != null ? book.getSubject() : "",
+                    book.getCategoryName() != null ? book.getCategoryName() : "",
                     book.getTitle() != null ? book.getTitle() : "");
-            if (gradeInfo.getGrade() != null && book.getGrade() == null) {
+            boolean gradeChanged = !java.util.Objects.equals(book.getGrade(), gradeInfo.getGrade());
+            boolean semChanged = !java.util.Objects.equals(book.getSemester(), gradeInfo.getSemester());
+            if (gradeChanged || semChanged) {
                 book.setGrade(gradeInfo.getGrade());
                 book.setSemester(gradeInfo.getSemester());
                 bookRepository.save(book);
                 updated++;
-                log.info("🔧 Updated grade for '{}' -> {} {}", book.getTitle(), gradeInfo.getGrade(), gradeInfo.getSemester());
+                log.info("Updated grade for '{}' -> {} {}", book.getTitle(), gradeInfo.getGrade(), gradeInfo.getSemester());
             }
         }
-        log.info("✅ Reprocessed grade for {} books", updated);
+        log.info("Reprocessed grade for {} books", updated);
         return updated;
     }
 
