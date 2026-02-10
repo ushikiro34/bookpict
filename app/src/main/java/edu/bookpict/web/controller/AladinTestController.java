@@ -41,6 +41,12 @@ public class AladinTestController {
         return "Manual sync completed.";
     }
 
+    @GetMapping("/trigger-sync")
+    public String triggerSyncGet() {
+        aladinSyncScheduler.manualSync();
+        return "Manual sync completed.";
+    }
+
     @PostMapping("/full-sync")
     public String fullSync(
             @RequestParam(defaultValue = "초등") String schoolLevel,
