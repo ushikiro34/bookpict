@@ -43,8 +43,8 @@ public class AladinTestController {
 
     @GetMapping("/trigger-sync")
     public String triggerSyncGet() {
-        aladinSyncScheduler.manualSync();
-        return "Manual sync completed.";
+        new Thread(() -> aladinSyncScheduler.manualSync()).start();
+        return "Sync started in background.";
     }
 
     @PostMapping("/full-sync")
