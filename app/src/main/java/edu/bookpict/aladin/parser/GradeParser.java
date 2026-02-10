@@ -34,7 +34,11 @@ public class GradeParser {
     private static final Pattern P_SHORT_NOTATION = Pattern.compile(
             "(?:초등|중등|고등|학교|수학|영어|국어|과학|사회|수능)\\s*(\\d)\\s*[-/·\\u00B7]\\s*([12])(?!\\d)");
 
-    // 패턴3: "중등3", "중3", "초등5", "고2" 등 학교급+학년 축약 표기
+    // 패턴3: 독립적인 "3-1", "4/2" 표기 (키워드 없이도 매칭)
+    private static final Pattern P_STANDALONE_NOTATION = Pattern.compile(
+            "(?<![\\da-zA-Z])([1-6])\\s*[-/]\\s*([12])(?!\\d)");
+
+    // 패턴4: "중등3", "중3", "초등5", "고2" 등 학교급+학년 축약 표기
     private static final Pattern P_LEVEL_GRADE = Pattern.compile(
             "(?:초등|중등|고등|초|중|고)\\s*(\\d)(?!\\d|학년|\\s*[-/·\\u00B7]\\s*\\d)");
 
@@ -85,7 +89,15 @@ public class GradeParser {
             return new GradeInfo(grade + "학년", sem + "학기");
         }
 
-        // 패턴3: "중등3", "중3", "초등5" 같은 학교급+학년 축약 표기
+        // 패턴3: 독립적인 "3-1", "4/2" 표기 (키워드 없이도 매칭)
+        Matcher m2b = P_STANDALONE_NOTATION.matcher(filtered);
+        if (m2b.find()) {
+            String grade = m2b.group(1);
+            String sem = m2b.group(2);
+            return new GradeInfo(grade + "학년", sem + "학기");
+        }
+
+        // 패턴4: "중등3", "중3", "초등5" 같은 학교급+학년 축약 표기
         Matcher mLevel = P_LEVEL_GRADE.matcher(filtered);
         if (mLevel.find()) {
             String grade = mLevel.group(1);
