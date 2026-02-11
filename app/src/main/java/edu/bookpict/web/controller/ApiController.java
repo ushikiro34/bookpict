@@ -27,9 +27,10 @@ public class ApiController {
             @RequestParam(required = false) String subject,
             @RequestParam(required = false) String schoolLevel,
             @RequestParam(required = false) String grade,
-            @RequestParam(required = false) String semester) {
+            @RequestParam(required = false) String semester,
+            @RequestParam(required = false) String keyword) {
 
-        List<BookListDto> books = bookService.getBooks(subject, schoolLevel, grade, semester);
+        List<BookListDto> books = bookService.getBooks(subject, schoolLevel, grade, semester, keyword);
         return ResponseEntity.ok(books);
     }
 

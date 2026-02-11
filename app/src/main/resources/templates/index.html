@@ -759,13 +759,15 @@
             const schoolLevel = document.getElementById('filter-level').value;
             const grade = document.getElementById('filter-grade').value;
             const semester = document.getElementById('filter-semester').value;
+            const keywordInput = document.querySelector('input[name="q"]');
+            const keyword = keywordInput ? keywordInput.value.trim() : '';
 
             currentFilters.subject = subject || null;
             currentFilters.schoolLevel = schoolLevel || null;
             currentFilters.grade = grade || null;
             currentFilters.semester = semester || null;
 
-            const hasAnyFilter = subject || schoolLevel || grade || semester;
+            const hasAnyFilter = subject || schoolLevel || grade || semester || keyword;
 
             if (!hasAnyFilter) {
                 renderSkeletonTop3();
@@ -778,6 +780,7 @@
             if (currentFilters.schoolLevel) params.append('schoolLevel', currentFilters.schoolLevel);
             if (currentFilters.grade) params.append('grade', currentFilters.grade);
             if (currentFilters.semester) params.append('semester', currentFilters.semester);
+            if (keyword) params.append('keyword', keyword);
 
             const url = '/api/books?' + params.toString();
 

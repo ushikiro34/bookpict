@@ -73,18 +73,32 @@ public class BookService {
          * - 과목+학교급 필터가 있으면 해당 카테고리 랭킹 적용
          */
         public List<BookListDto> getBooks(String subject, String schoolLevel, String grade, String semester) {
+                return getBooks(subject, schoolLevel, grade, semester, null);
+        }
+
+        public List<BookListDto> getBooks(String subject, String schoolLevel, String grade, String semester, String keyword) {
                 String s = (subject == null || subject.equals("null")) ? null : subject;
                 String l = (schoolLevel == null || schoolLevel.equals("null")) ? null : schoolLevel;
                 String g = (grade == null || grade.equals("null")) ? null : grade;
                 String sem = (semester == null || semester.equals("null")) ? null : semester;
+                String kw = (keyword == null || keyword.isBlank()) ? null : keyword.trim();
 
-                // 모든 필터가 없으면 빈 목록 반환 (초기 화면 조회 안함)
-                if (s == null && l == null && g == null && sem == null) {
+                // 모든 필터와 검색어가 없으면 빈 목록 반환 (초기 화면 조회 안함)
+                if (s == null && l == null && g == null && sem == null && kw == null) {
                         return java.util.Collections.emptyList();
                 }
 
-                // 기본 필터 적용 (과목, 학교급)
-                List<Book> books = bookRepository.findByFilters(s, l);
+                List<Book> books;
+
+                // 필터가 있으면 필터 기반 조회, 없으면 전체에서 키워드 검색
+                boolean hasFilter = s != null || l != null;
+                if (hasFilter) {
+                        books = bookRepository.findByFilters(s, l);
+                } else if (kw != null) {
+                        books = bookRepository.searchByKeyword(kw);
+                } else {
+                        books = java.util.Collections.emptyList();
+                }
 
                 // 학년 필터 적용
                 if (g != null && !g.isEmpty()) {
@@ -97,6 +111,15 @@ public class BookService {
                 if (sem != null && !sem.isEmpty()) {
                         books = books.stream()
                                 .filter(book -> book.getSemester() != null && book.getSemester().equals(sem))
+                                .collect(Collectors.toList());
+                }
+
+                // 키워드 필터 적용 (필터 조회 결과에서 추가 필터링)
+                if (kw != null && hasFilter) {
+                        final String kwLower = kw.toLowerCase();
+                        books = books.stream()
+                                .filter(book -> (book.getTitle() != null && book.getTitle().toLowerCase().contains(kwLower))
+                                        || (book.getPublisher() != null && book.getPublisher().toLowerCase().contains(kwLower)))
                                 .collect(Collectors.toList());
                 }
 
