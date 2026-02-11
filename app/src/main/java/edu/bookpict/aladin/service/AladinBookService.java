@@ -634,20 +634,33 @@ public class AladinBookService {
     public int reprocessAllBooksGradeGroup() {
         int updated = 0;
         for (edu.bookpict.domain.book.Book book : bookRepository.findAll()) {
+            boolean changed = false;
+
+            // 학년/학기 재처리
             edu.bookpict.aladin.parser.GradeParser.GradeInfo gradeInfo = edu.bookpict.aladin.parser.GradeParser.detectGrade(
                     book.getCategoryName() != null ? book.getCategoryName() : "",
                     book.getTitle() != null ? book.getTitle() : "");
-            boolean gradeChanged = !java.util.Objects.equals(book.getGrade(), gradeInfo.getGrade());
-            boolean semChanged = !java.util.Objects.equals(book.getSemester(), gradeInfo.getSemester());
-            if (gradeChanged || semChanged) {
+            if (!java.util.Objects.equals(book.getGrade(), gradeInfo.getGrade())
+                    || !java.util.Objects.equals(book.getSemester(), gradeInfo.getSemester())) {
                 book.setGrade(gradeInfo.getGrade());
                 book.setSemester(gradeInfo.getSemester());
+                changed = true;
+            }
+
+            // 과목 재처리
+            String newSubject = detectSubject(book.getCategoryName(), book.getTitle());
+            if (!java.util.Objects.equals(book.getSubject(), newSubject)) {
+                log.info("Updated subject for '{}': {} -> {}", book.getTitle(), book.getSubject(), newSubject);
+                book.setSubject(newSubject);
+                changed = true;
+            }
+
+            if (changed) {
                 bookRepository.save(book);
                 updated++;
-                log.info("Updated grade for '{}' -> {} {}", book.getTitle(), gradeInfo.getGrade(), gradeInfo.getSemester());
             }
         }
-        log.info("Reprocessed grade for {} books", updated);
+        log.info("Reprocessed {} books (grade + subject)", updated);
         return updated;
     }
 
@@ -747,20 +760,31 @@ public class AladinBookService {
      * 과목 감지
      */
     private String detectSubject(String category, String title) {
-        String combined = (category + " " + title).toLowerCase();
-        
-        if (combined.contains("수학")) return "수학";
-        if (combined.contains("영어") || combined.contains("english")) return "영어";
-        if (combined.contains("국어")) return "국어";
-        if (combined.contains("과학") || combined.contains("물리") || combined.contains("화학") 
-            || combined.contains("생물") || combined.contains("지구")) return "과학";
-        // 역사 관련: 한국사, 세계사 우선 매핑
-        if (combined.contains("한국사")) return "한국사";
-        if (combined.contains("세계사")) return "세계사";
-        // 일반적인 '역사' 또는 '사회' 키워드는 '사회'로 분류
-        if (combined.contains("사회") || combined.contains("역사") || combined.contains("지리")) return "사회";
-        
+        String cat = (category != null ? category : "").toLowerCase();
+        String ttl = (title != null ? title : "").toLowerCase();
+
+        // 1단계: 카테고리(알라딘 분류)에서 과목 감지 (가장 신뢰도 높음)
+        String catResult = matchSubject(cat);
+        if (catResult != null) return catResult;
+
+        // 2단계: 제목에서 과목 감지 (카테고리에서 못 찾은 경우 폴백)
+        String titleResult = matchSubject(ttl);
+        if (titleResult != null) return titleResult;
+
         return "기타";
+    }
+
+    private String matchSubject(String text) {
+        // 구체적인 과목명을 먼저 체크 (세계사 > 사회, 한국사 > 사회)
+        if (text.contains("세계사")) return "세계사";
+        if (text.contains("한국사")) return "한국사";
+        if (text.contains("수학")) return "수학";
+        if (text.contains("영어") || text.contains("english")) return "영어";
+        if (text.contains("국어")) return "국어";
+        if (text.contains("과학") || text.contains("물리") || text.contains("화학")
+            || text.contains("생물") || text.contains("지구")) return "과학";
+        if (text.contains("사회") || text.contains("역사") || text.contains("지리")) return "사회";
+        return null;
     }
 
     /**
