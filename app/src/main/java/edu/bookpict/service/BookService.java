@@ -145,7 +145,31 @@ public class BookService {
         }
 
         /**
-         * ✅ 랜덤으로 최대 10개의 도서 조회 (페이지 초기 로드, 리셋 버튼 클릭 시 사용)
+         * 전체 데이터 기준 판매량 TOP 3 조회 (랭킹 테이블 기반)
+         */
+        public List<BookListDto> getTop3ByRanking() {
+                List<SalesRanking> rankings = rankingService.getOverallRankings();
+
+                // bookId 기준 중복 제거 (가장 높은 순위만 유지)
+                java.util.LinkedHashMap<String, SalesRanking> bestPerBook = new java.util.LinkedHashMap<>();
+                for (SalesRanking ranking : rankings) {
+                        String bookId = ranking.getBookIsbnLink().getBook().getBookId();
+                        bestPerBook.putIfAbsent(bookId, ranking);
+                }
+
+                return bestPerBook.values().stream()
+                                .limit(3)
+                                .map(ranking -> {
+                                        Book book = ranking.getBookIsbnLink().getBook();
+                                        BookListDto dto = convertToListDto(book);
+                                        dto.setBestsellerRank(ranking.getRankPosition());
+                                        return dto;
+                                })
+                                .collect(Collectors.toList());
+        }
+
+        /**
+         * 랜덤으로 최대 5개의 도서 조회 (페이지 초기 로드, 리셋 버튼 클릭 시 사용)
          */
         public List<BookListDto> getRandomBooks() {
                 return bookRepository.findRandomBooks().stream()

@@ -35,7 +35,17 @@ public class ApiController {
     }
 
     /**
-     * ✅ 랜덤 10개 도서 조회 API
+     * 전체 데이터 기준 판매량 TOP 3 조회
+     * GET /api/books/top3
+     */
+    @GetMapping("/books/top3")
+    public ResponseEntity<List<BookListDto>> getTop3Books() {
+        List<BookListDto> books = bookService.getTop3ByRanking();
+        return ResponseEntity.ok(books);
+    }
+
+    /**
+     * 랜덤 5개 도서 조회 API
      * GET /api/books/random
      */
     @GetMapping("/books/random")
