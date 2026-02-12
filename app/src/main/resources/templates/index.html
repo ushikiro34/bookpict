@@ -12,8 +12,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet" />
 
+    <!-- Google AdSense - 준비중
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1857784028196792"
         crossorigin="anonymous"></script>
+    -->
 
 
     <script>
@@ -529,7 +531,7 @@
 
     <!-- AdSense & Footer Area -->
     <div class="fixed bottom-0 left-0 right-0 z-30 flex flex-col">
-        <!-- AdSense Placeholder -->
+        <!-- AdSense - 준비중
         <div id="adsense-area"
             class="px-6 py-2 text-center border-t border-olive-cobalt-muted/10 bg-white/90 backdrop-blur-md">
             <div
@@ -537,6 +539,7 @@
                 <p class="text-[10px] font-bold text-olive-cobalt-muted/40 uppercase tracking-widest">Advertisement</p>
             </div>
         </div>
+        -->
 
         <!-- Footer -->
         <footer class="px-6 py-2.5 text-center border-t border-olive-cobalt-muted/10 bg-white/90 backdrop-blur-md">
@@ -800,11 +803,25 @@
             }
         }
 
-        // Alert on page load if initial results > 50
+        // 페이지 로딩 시 필터 미적용이면 랜덤 5건 표시
         window.addEventListener('DOMContentLoaded', () => {
             const initialCount = [[${ books != null ? books.size() : 0}]];
-            
+            if (initialCount === 0) {
+                loadRandomBooks();
+            }
         });
+
+        async function loadRandomBooks() {
+            try {
+                const response = await fetch('/api/books/random');
+                const data = await response.json();
+                if (data.length > 0) {
+                    renderBooks(data);
+                }
+            } catch (error) {
+                console.error('Random books fetch error:', error);
+            }
+        }
 
         function renderStars(rating) {
             if (!rating) return '-';

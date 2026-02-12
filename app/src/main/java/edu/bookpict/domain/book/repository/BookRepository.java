@@ -33,11 +33,11 @@ public interface BookRepository extends JpaRepository<Book, String> {
         List<Book> searchByKeyword(@Param("keyword") String keyword);
 
         /**
-         * 랜덤으로 최대 10개의 도서 조회 (Java 셔플 - DB 종류 무관)
+         * 랜덤으로 최대 5개의 도서 조회 (Java 셔플 - DB 종류 무관)
          */
         default List<Book> findRandomBooks() {
                 List<Book> all = findAll();
                 java.util.Collections.shuffle(all);
-                return all.stream().limit(10).collect(java.util.stream.Collectors.toList());
+                return all.stream().limit(5).collect(java.util.stream.Collectors.toList());
         }
 }
