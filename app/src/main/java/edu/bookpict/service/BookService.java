@@ -145,9 +145,9 @@ public class BookService {
         }
 
         /**
-         * 전체 데이터 기준 판매량 TOP 3 조회 (랭킹 테이블 기반)
+         * 전체 데이터 기준 판매량 TOP N 조회 (랭킹 테이블 기반)
          */
-        public List<BookListDto> getTop3ByRanking() {
+        public List<BookListDto> getTopByRanking(int limit) {
                 List<SalesRanking> rankings = rankingService.getOverallRankings();
 
                 // bookId 기준 중복 제거 (가장 높은 순위만 유지)
@@ -158,7 +158,7 @@ public class BookService {
                 }
 
                 return bestPerBook.values().stream()
-                                .limit(3)
+                                .limit(limit)
                                 .map(ranking -> {
                                         Book book = ranking.getBookIsbnLink().getBook();
                                         BookListDto dto = convertToListDto(book);
