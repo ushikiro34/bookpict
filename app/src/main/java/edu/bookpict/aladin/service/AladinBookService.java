@@ -763,15 +763,32 @@ public class AladinBookService {
         String cat = (category != null ? category : "").toLowerCase();
         String ttl = (title != null ? title : "").toLowerCase();
 
-        // 1단계: 카테고리(알라딘 분류)에서 과목 감지 (가장 신뢰도 높음)
-        String catResult = matchSubject(cat);
-        if (catResult != null) return catResult;
-
-        // 2단계: 제목에서 과목 감지 (카테고리에서 못 찾은 경우 폴백)
+        // 1단계: 제목에서 과목 감지 (가장 명확한 과목 표기)
         String titleResult = matchSubject(ttl);
         if (titleResult != null) return titleResult;
 
+        // 2단계: 카테고리의 각 세그먼트에서 과목 감지
+        // 복합 과목 세그먼트(과학/수학/사회 등)는 특정 과목 판별 불가 → 스킵
+        for (String segment : cat.split(">")) {
+            segment = segment.trim();
+            if (countSubjectMatches(segment) > 1) continue;
+            String result = matchSubject(segment);
+            if (result != null) return result;
+        }
+
         return "기타";
+    }
+
+    private int countSubjectMatches(String text) {
+        int count = 0;
+        if (text.contains("수학")) count++;
+        if (text.contains("영어") || text.contains("english")) count++;
+        if (text.contains("국어")) count++;
+        if (text.contains("과학") || text.contains("물리") || text.contains("화학")
+            || text.contains("생물") || text.contains("지구")) count++;
+        if (text.contains("사회") || text.contains("역사") || text.contains("지리")
+            || text.contains("세계사") || text.contains("한국사")) count++;
+        return count;
     }
 
     private String matchSubject(String text) {
