@@ -655,6 +655,14 @@ public class AladinBookService {
                 changed = true;
             }
 
+            // 학교급 재처리
+            String newSchoolLevel = detectSchoolLevel(book.getCategoryName(), book.getTitle());
+            if (!java.util.Objects.equals(book.getSchoolLevel(), newSchoolLevel)) {
+                log.info("Updated schoolLevel for '{}': {} -> {}", book.getTitle(), book.getSchoolLevel(), newSchoolLevel);
+                book.setSchoolLevel(newSchoolLevel);
+                changed = true;
+            }
+
             if (changed) {
                 bookRepository.save(book);
                 updated++;
