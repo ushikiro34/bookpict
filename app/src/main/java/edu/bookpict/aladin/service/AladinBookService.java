@@ -808,13 +808,25 @@ public class AladinBookService {
      * 학교급 감지
      */
     private String detectSchoolLevel(String category, String title) {
-        String combined = (category + " " + title).toLowerCase();
-        
-        if (combined.contains("고등")) return "고등";
-        if (combined.contains("중등") || combined.contains("중학")) return "중등";
-        if (combined.contains("초등")) return "초등";
-        
+        String cat = (category != null ? category : "").toLowerCase();
+        String ttl = (title != null ? title : "").toLowerCase();
+
+        // 1단계: 카테고리에서 학교급 감지 (알라딘 분류가 가장 정확)
+        String catResult = matchSchoolLevel(cat);
+        if (catResult != null) return catResult;
+
+        // 2단계: 제목에서 학교급 감지
+        String titleResult = matchSchoolLevel(ttl);
+        if (titleResult != null) return titleResult;
+
         return "기타";
+    }
+
+    private String matchSchoolLevel(String text) {
+        if (text.contains("고등")) return "고등";
+        if (text.contains("중등") || text.contains("중학")) return "중등";
+        if (text.contains("초등")) return "초등";
+        return null;
     }
 
     /**
