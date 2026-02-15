@@ -168,16 +168,6 @@ public class BookService {
                                 .collect(Collectors.toList());
         }
 
-        /**
-         * 랜덤으로 최대 5개의 도서 조회 (페이지 초기 로드, 리셋 버튼 클릭 시 사용)
-         */
-        public List<BookListDto> getRandomBooks() {
-                return bookRepository.findRandomBooks().stream()
-                                .map(this::convertToListDto)
-                                .sorted(getStandardComparator())
-                                .collect(Collectors.toList());
-        }
-
         private Comparator<BookListDto> getStandardComparator() {
                 return Comparator.comparing(BookListDto::getBestsellerRank,
                                 Comparator.nullsLast(Comparator.naturalOrder()))

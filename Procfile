@@ -1,1 +1,1 @@
-web: java -Dspring.profiles.active=prod -jar app/build/libs/app-0.0.1-SNAPSHOT.jar
+web: java -Xmx256m -Xms128m -XX:+UseSerialGC -Dspring.profiles.active=prod -jar app/build/libs/app-0.0.1-SNAPSHOT.jar
