@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>중등 국어 교재 선택 가이드 - 스쿨북스</title>
+    <meta name="description" content="중학생을 위한 국어 참고서 선택 가이드. 문학·비문학 독해력 향상과 내신 대비 전략을 안내합니다." />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { "primary": "#2d3e50", "accent-orange": "#f97316", "olive-cobalt-muted": "#94a3b8", "olive-cobalt-dark": "#1e293b" },
+                    fontFamily: { "display": ["Plus Jakarta Sans", "sans-serif"] },
+                },
+            },
+        }
+    </script>
+    <style type="text/tailwindcss">
+        :root { --primary-mix: #2d3e50; --soft-mix: #f2f5f2; --bg-neutral: #fafbf9; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-neutral); font-size: 16px; }
+    </style>
+</head>
+
+<body class="bg-[var(--bg-neutral)] font-display text-olive-cobalt-dark pb-20">
+    <div class="flex items-center bg-white/80 backdrop-blur-md p-4 sticky top-0 z-20 border-b border-olive-cobalt-muted/10">
+        <a href="/guide" class="text-primary flex size-10 items-center justify-start">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </a>
+        <h2 class="text-primary text-lg font-bold flex-1 text-center">중등 국어 교재 가이드</h2>
+        <div class="size-10"></div>
+    </div>
+
+    <article class="max-w-2xl mx-auto p-4 space-y-8">
+
+        <section>
+            <p class="text-sm text-olive-cobalt-dark/80 leading-relaxed">
+                중학교 국어는 초등학교와 달리 문학 작품 분석, 비문학 독해, 문법 이론 등이 본격적으로 다뤄집니다.
+                내신 시험에서도 높은 비중을 차지하므로 체계적인 교재 선택과 학습 전략이 중요합니다.
+            </p>
+        </section>
+
+        <section class="bg-white rounded-xl border border-olive-cobalt-muted/10 p-5">
+            <h3 class="font-bold text-primary text-[15px] mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-lg">auto_stories</span>
+                중등 국어 교육과정 핵심 포인트
+            </h3>
+            <div class="text-sm text-olive-cobalt-dark/80 leading-relaxed space-y-3">
+                <p>중학교 국어는 <strong>듣기·말하기, 읽기, 쓰기, 문법, 문학</strong> 영역이 심화되며, 특히 다음 내용이 중요합니다.</p>
+
+                <div class="bg-blue-50/50 rounded-lg p-4 space-y-2">
+                    <p><strong>읽기 영역</strong></p>
+                    <ul class="list-disc pl-5 space-y-1 text-[13px]">
+                        <li>사실적·추론적·비판적 읽기 전략 학습</li>
+                        <li>다양한 유형의 비문학 지문 분석 (과학, 사회, 예술, 기술 등)</li>
+                        <li>글의 구조와 전개 방식 파악 (비교·대조, 인과, 문제·해결 등)</li>
+                        <li>필자의 의도와 관점 파악 능력</li>
+                    </ul>
+                </div>
+
+                <div class="bg-blue-50/50 rounded-lg p-4 space-y-2">
+                    <p><strong>문법 영역</strong></p>
+                    <ul class="list-disc pl-5 space-y-1 text-[13px]">
+                        <li>품사의 종류와 특성 (명사, 동사, 형용사, 부사 등 9품사)</li>
+                        <li>문장 성분 (주어, 서술어, 목적어, 보어, 관형어, 부사어)</li>
+                        <li>단어의 형성 (파생어, 합성어)</li>
+                        <li>한글 맞춤법과 표준어 규정</li>
+                    </ul>
+                </div>
+
+                <div class="bg-blue-50/50 rounded-lg p-4 space-y-2">
+                    <p><strong>문학 영역</strong></p>
+                    <ul class="list-disc pl-5 space-y-1 text-[13px]">
+                        <li>시·소설·수필·희곡 등 갈래별 특성 이해</li>
+                        <li>문학 작품의 주제, 소재, 표현 기법 분석</li>
+                        <li>작품의 시대적·사회적 배경 파악</li>
+                        <li>고전 문학 입문 (고전 시가, 고전 소설)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-xl border border-olive-cobalt-muted/10 p-5">
+            <h3 class="font-bold text-primary text-[15px] mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-lg">checklist</span>
+                교재 선택 시 주의사항
+            </h3>
+            <div class="text-sm text-olive-cobalt-dark/80 leading-relaxed space-y-3">
+                <div class="flex gap-3">
+                    <span class="text-primary font-bold text-lg leading-none mt-0.5">1</span>
+                    <div>
+                        <p class="font-semibold mb-1">교과서 출판사별 교재를 확인하세요</p>
+                        <p class="text-[13px]">중학교 국어는 학교마다 사용하는 교과서 출판사가 다릅니다. 내신 대비를 위해서는 자기 학교 교과서에 맞는 참고서를 선택하는 것이 중요합니다. 교과서와 동일한 출판사의 자습서나 평가문제집을 기본으로 갖추세요.</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <span class="text-primary font-bold text-lg leading-none mt-0.5">2</span>
+                    <div>
+                        <p class="font-semibold mb-1">문법 전용 교재를 별도로 준비하세요</p>
+                        <p class="text-[13px]">국어 문법은 독립된 영역으로 체계적인 학습이 필요합니다. 교과서 참고서에 포함된 문법 내용만으로는 부족할 수 있으므로, 중학 문법 전문 교재를 1권 이상 갖추는 것을 추천합니다.</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <span class="text-primary font-bold text-lg leading-none mt-0.5">3</span>
+                    <div>
+                        <p class="font-semibold mb-1">독해력 교재로 읽기 능력을 키우세요</p>
+                        <p class="text-[13px]">내신 시험에서 비문학 지문이 새로 출제되는 경우가 많습니다. 교과서 외 다양한 지문을 접할 수 있는 독해력 전문 교재를 활용하면 시험 대비와 수능 기초 다지기에 모두 도움이 됩니다.</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <span class="text-primary font-bold text-lg leading-none mt-0.5">4</span>
+                    <div>
+                        <p class="font-semibold mb-1">기출문제집으로 시험 유형을 파악하세요</p>
+                        <p class="text-[13px]">내신 시험 유형은 학교마다 다르지만, 기출문제집을 통해 서술형 문제 비중, 문법 출제 경향 등을 미리 파악할 수 있습니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-xl border border-olive-cobalt-muted/10 p-5">
+            <h3 class="font-bold text-primary text-[15px] mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-lg">lightbulb</span>
+                추천 학습 전략
+            </h3>
+            <div class="text-sm text-olive-cobalt-dark/80 leading-relaxed space-y-3">
+                <p><strong>교과서 정독이 기본</strong>: 내신 시험의 70% 이상이 교과서에서 출제됩니다. 교과서 본문을 최소 3회 이상 정독하고, 학습 활동과 날개 질문까지 꼼꼼히 확인하세요.</p>
+                <p><strong>문학 작품 배경지식 쌓기</strong>: 시험에 나오는 문학 작품의 작가, 시대 배경, 문학사적 의미를 함께 정리하면 심화 문제에 대응할 수 있습니다.</p>
+                <p><strong>서술형 답안 작성 연습</strong>: 국어 내신에서 서술형 비중이 높아지고 있습니다. 주요 개념을 자신의 말로 설명하는 연습을 반복하세요. 모범 답안의 구조를 분석하고 따라 쓰는 것도 좋은 방법입니다.</p>
+                <p><strong>어휘력은 꾸준히</strong>: 한자어, 관용어, 속담 등을 매일 조금씩 학습하면 지문 이해력과 어휘 문제 대비에 큰 도움이 됩니다.</p>
+            </div>
+        </section>
+
+        <div class="p-5 bg-primary/5 rounded-xl border border-primary/10 text-center">
+            <h3 class="font-bold text-primary text-[15px] mb-2">중등 국어 참고서를 찾고 계신가요?</h3>
+            <p class="text-sm text-olive-cobalt-dark/70 mb-4">스쿨북스에서 학년별 국어 참고서를 검색하고 비교해보세요.</p>
+            <a href="/?subject=국어&schoolLevel=중등"
+                class="inline-flex items-center gap-1.5 bg-primary text-white text-sm font-bold px-5 py-2.5 rounded-lg hover:bg-primary/90 transition-colors">
+                <span class="material-symbols-outlined text-lg">search</span>
+                중등 국어 교재 검색하기
+            </a>
+        </div>
+
+        <div class="flex items-center justify-between pt-4">
+            <a href="/guide/elementary-math" class="inline-flex items-center gap-1 text-sm font-semibold text-olive-cobalt-muted hover:text-primary transition-colors">
+                <span class="material-symbols-outlined text-lg">arrow_back</span>
+                초등 수학 가이드
+            </a>
+            <a href="/guide/middle-math" class="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-accent-orange transition-colors">
+                중등 수학 가이드
+                <span class="material-symbols-outlined text-lg">arrow_forward</span>
+            </a>
+        </div>
+
+    </article>
+
+    <footer class="mt-12 px-6 py-4 text-center border-t border-olive-cobalt-muted/10 bg-white/90">
+        <p class="text-[10px] text-olive-cobalt-muted/70 leading-snug">스쿨북스는 참고서 검색 및 비교를 돕는 정보 제공 서비스입니다.</p>
+        <div class="flex items-center justify-center gap-2 mt-1">
+            <p class="text-[9px] text-olive-cobalt-muted/50">&copy; 2026 스쿨북스. All rights reserved.</p>
+            <span class="text-[9px] text-olive-cobalt-muted/30">|</span>
+            <a href="/terms" class="text-[9px] text-olive-cobalt-muted/70 hover:text-primary font-medium underline underline-offset-2">이용약관</a>
+            <span class="text-[9px] text-olive-cobalt-muted/30">|</span>
+            <a href="/privacy" class="text-[9px] text-olive-cobalt-muted/70 hover:text-primary font-medium underline underline-offset-2">개인정보처리방침</a>
+        </div>
+    </footer>
+</body>
+</html>

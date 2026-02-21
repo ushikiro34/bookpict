@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>중등 영어 교재 선택 가이드 - 스쿨북스</title>
+    <meta name="description" content="중학생을 위한 영어 참고서 선택 가이드. 문법·독해·어휘 균형 잡힌 학습 전략과 내신 대비 방법을 안내합니다." />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { "primary": "#2d3e50", "accent-orange": "#f97316", "olive-cobalt-muted": "#94a3b8", "olive-cobalt-dark": "#1e293b" },
+                    fontFamily: { "display": ["Plus Jakarta Sans", "sans-serif"] },
+                },
+            },
+        }
+    </script>
+    <style type="text/tailwindcss">
+        :root { --primary-mix: #2d3e50; --soft-mix: #f2f5f2; --bg-neutral: #fafbf9; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-neutral); font-size: 16px; }
+    </style>
+</head>
+
+<body class="bg-[var(--bg-neutral)] font-display text-olive-cobalt-dark pb-20">
+    <div class="flex items-center bg-white/80 backdrop-blur-md p-4 sticky top-0 z-20 border-b border-olive-cobalt-muted/10">
+        <a href="/guide" class="text-primary flex size-10 items-center justify-start">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </a>
+        <h2 class="text-primary text-lg font-bold flex-1 text-center">중등 영어 교재 가이드</h2>
+        <div class="size-10"></div>
+    </div>
+
+    <article class="max-w-2xl mx-auto p-4 space-y-8">
+
+        <section>
+            <p class="text-sm text-olive-cobalt-dark/80 leading-relaxed">
+                중학교 영어는 초등 영어와 달리 문법, 독해, 쓰기가 본격적으로 시작되는 시기입니다.
+                이 시기에 영어 기초를 탄탄히 다져야 고등학교 수능 영어와 내신에서 좋은 성과를 얻을 수 있습니다.
+                문법·독해·어휘를 균형 있게 학습할 수 있는 교재 선택이 중요합니다.
+            </p>
+        </section>
+
+        <section class="bg-white rounded-xl border border-olive-cobalt-muted/10 p-5">
+            <h3 class="font-bold text-primary text-[15px] mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-lg">translate</span>
+                중등 영어 교육과정 핵심 포인트
+            </h3>
+            <div class="text-sm text-olive-cobalt-dark/80 leading-relaxed space-y-3">
+                <p>중학교 영어는 <strong>듣기, 말하기, 읽기, 쓰기</strong> 4가지 기능을 고루 발달시키는 것을 목표로 합니다.</p>
+
+                <div class="bg-amber-50/50 rounded-lg p-4 space-y-2">
+                    <p><strong>문법 핵심 영역</strong></p>
+                    <ul class="list-disc pl-5 space-y-1 text-[13px]">
+                        <li>8품사 이해 (명사, 대명사, 동사, 형용사, 부사, 전치사, 접속사, 감탄사)</li>
+                        <li>시제 (현재, 과거, 미래, 현재완료)</li>
+                        <li>문장의 형식 (1~5형식)</li>
+                        <li>조동사, 수동태, 관계대명사</li>
+                        <li>to부정사, 동명사, 분사</li>
+                        <li>비교급과 최상급</li>
+                        <li>접속사와 복합문</li>
+                    </ul>
+                </div>
+
+                <div class="bg-amber-50/50 rounded-lg p-4 space-y-2">
+                    <p><strong>읽기·독해 영역</strong></p>
+                    <ul class="list-disc pl-5 space-y-1 text-[13px]">
+                        <li>다양한 주제의 영어 지문 읽기 (일상, 문화, 과학, 환경 등)</li>
+                        <li>주제문과 세부 정보 파악</li>
+                        <li>글의 흐름과 논리적 순서 이해</li>
+                        <li>어휘 추론과 문맥 파악 능력</li>
+                    </ul>
+                </div>
+
+                <div class="bg-amber-50/50 rounded-lg p-4 space-y-2">
+                    <p><strong>쓰기 영역</strong></p>
+                    <ul class="list-disc pl-5 space-y-1 text-[13px]">
+                        <li>올바른 영어 문장 작성 (어순, 시제 일치)</li>
+                        <li>짧은 영어 에세이 쓰기</li>
+                        <li>영작문 기초 (한국어를 영어로 옮기기)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-xl border border-olive-cobalt-muted/10 p-5">
+            <h3 class="font-bold text-primary text-[15px] mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-lg">checklist</span>
+                교재 선택 시 주의사항
+            </h3>
+            <div class="text-sm text-olive-cobalt-dark/80 leading-relaxed space-y-3">
+                <div class="flex gap-3">
+                    <span class="text-primary font-bold text-lg leading-none mt-0.5">1</span>
+                    <div>
+                        <p class="font-semibold mb-1">문법 전용 교재를 반드시 준비하세요</p>
+                        <p class="text-[13px]">중학 영어에서 문법은 내신 시험의 핵심입니다. 교과서 참고서와는 별도로 중학 영문법 전문 교재를 1권 이상 갖추세요. 기초가 부족하면 쉬운 레벨부터, 기초가 있으면 중급 레벨을 선택하세요.</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <span class="text-primary font-bold text-lg leading-none mt-0.5">2</span>
+                    <div>
+                        <p class="font-semibold mb-1">교과서 출판사에 맞는 내신 교재를 선택하세요</p>
+                        <p class="text-[13px]">영어도 학교마다 사용하는 교과서 출판사가 다릅니다. 내신 시험은 교과서 본문에서 출제되므로, 자기 학교 교과서에 맞는 자습서와 평가문제집을 반드시 갖추세요.</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <span class="text-primary font-bold text-lg leading-none mt-0.5">3</span>
+                    <div>
+                        <p class="font-semibold mb-1">독해 교재로 읽기 실력을 키우세요</p>
+                        <p class="text-[13px]">내신뿐 아니라 수능 영어를 대비하려면 다양한 유형의 영어 지문을 접하는 것이 중요합니다. 중학 수준에 맞는 독해 교재를 활용하여 읽기 속도와 정확도를 높이세요.</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <span class="text-primary font-bold text-lg leading-none mt-0.5">4</span>
+                    <div>
+                        <p class="font-semibold mb-1">어휘 교재를 별도로 활용하세요</p>
+                        <p class="text-[13px]">중학교 필수 영단어는 약 1,500~2,000개 수준입니다. 체계적인 어휘 학습을 위해 중학 필수 영단어 교재를 별도로 준비하고, 매일 일정량의 단어를 암기하는 습관을 들이세요.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-xl border border-olive-cobalt-muted/10 p-5">
+            <h3 class="font-bold text-primary text-[15px] mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-lg">lightbulb</span>
+                추천 학습 전략
+            </h3>
+            <div class="text-sm text-olive-cobalt-dark/80 leading-relaxed space-y-3">
+                <p><strong>교과서 본문 암기</strong>: 내신 시험 대비의 가장 확실한 방법은 교과서 본문을 암기하는 것입니다. 본문을 여러 번 읽고, 핵심 문장을 직접 써보면서 자연스럽게 문법과 어휘를 체득하세요.</p>
+                <p><strong>문법은 예문과 함께</strong>: 문법 규칙만 암기하는 것보다 예문을 통해 학습하는 것이 효과적입니다. 각 문법 항목마다 대표 예문 2~3개를 만들어 정리하세요.</p>
+                <p><strong>매일 영어 노출</strong>: 영어 동영상, 팟캐스트, 영어 자막 영상 등을 통해 매일 영어에 노출되는 시간을 만드세요. 듣기 실력은 물론 읽기·어휘 능력도 함께 향상됩니다.</p>
+                <p><strong>영작 연습</strong>: 일기, 독후감, 짧은 에세이 등을 영어로 작성하는 연습을 하세요. 서술형 시험 대비뿐 아니라 문법 활용 능력이 크게 향상됩니다. 처음에는 3~5문장으로 시작하여 점차 늘려가세요.</p>
+                <p><strong>오답 패턴 분석</strong>: 문법 문제에서 자주 틀리는 유형을 정리하세요. 시제 혼동, 전치사 오류, 관계대명사 등 자신의 약점을 파악하고 집중적으로 보완하면 점수가 빠르게 올라갑니다.</p>
+            </div>
+        </section>
+
+        <div class="p-5 bg-primary/5 rounded-xl border border-primary/10 text-center">
+            <h3 class="font-bold text-primary text-[15px] mb-2">중등 영어 참고서를 찾고 계신가요?</h3>
+            <p class="text-sm text-olive-cobalt-dark/70 mb-4">스쿨북스에서 학년별 영어 참고서를 검색하고 비교해보세요.</p>
+            <a href="/?subject=영어&schoolLevel=중등"
+                class="inline-flex items-center gap-1.5 bg-primary text-white text-sm font-bold px-5 py-2.5 rounded-lg hover:bg-primary/90 transition-colors">
+                <span class="material-symbols-outlined text-lg">search</span>
+                중등 영어 교재 검색하기
+            </a>
+        </div>
+
+        <div class="flex items-center justify-between pt-4">
+            <a href="/guide/middle-math" class="inline-flex items-center gap-1 text-sm font-semibold text-olive-cobalt-muted hover:text-primary transition-colors">
+                <span class="material-symbols-outlined text-lg">arrow_back</span>
+                중등 수학 가이드
+            </a>
+            <a href="/guide" class="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-accent-orange transition-colors">
+                전체 가이드 목록
+                <span class="material-symbols-outlined text-lg">arrow_forward</span>
+            </a>
+        </div>
+
+    </article>
+
+    <footer class="mt-12 px-6 py-4 text-center border-t border-olive-cobalt-muted/10 bg-white/90">
+        <p class="text-[10px] text-olive-cobalt-muted/70 leading-snug">스쿨북스는 참고서 검색 및 비교를 돕는 정보 제공 서비스입니다.</p>
+        <div class="flex items-center justify-center gap-2 mt-1">
+            <p class="text-[9px] text-olive-cobalt-muted/50">&copy; 2026 스쿨북스. All rights reserved.</p>
+            <span class="text-[9px] text-olive-cobalt-muted/30">|</span>
+            <a href="/terms" class="text-[9px] text-olive-cobalt-muted/70 hover:text-primary font-medium underline underline-offset-2">이용약관</a>
+            <span class="text-[9px] text-olive-cobalt-muted/30">|</span>
+            <a href="/privacy" class="text-[9px] text-olive-cobalt-muted/70 hover:text-primary font-medium underline underline-offset-2">개인정보처리방침</a>
+        </div>
+    </footer>
+</body>
+</html>

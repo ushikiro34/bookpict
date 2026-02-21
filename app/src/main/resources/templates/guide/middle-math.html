@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>중등 수학 교재 선택 가이드 - 스쿨북스</title>
+    <meta name="description" content="중학생을 위한 수학 참고서 선택 가이드. 개념 정립부터 내신·수능 기초까지 단계별 학습 전략을 안내합니다." />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { "primary": "#2d3e50", "accent-orange": "#f97316", "olive-cobalt-muted": "#94a3b8", "olive-cobalt-dark": "#1e293b" },
+                    fontFamily: { "display": ["Plus Jakarta Sans", "sans-serif"] },
+                },
+            },
+        }
+    </script>
+    <style type="text/tailwindcss">
+        :root { --primary-mix: #2d3e50; --soft-mix: #f2f5f2; --bg-neutral: #fafbf9; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-neutral); font-size: 16px; }
+    </style>
+</head>
+
+<body class="bg-[var(--bg-neutral)] font-display text-olive-cobalt-dark pb-20">
+    <div class="flex items-center bg-white/80 backdrop-blur-md p-4 sticky top-0 z-20 border-b border-olive-cobalt-muted/10">
+        <a href="/guide" class="text-primary flex size-10 items-center justify-start">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </a>
+        <h2 class="text-primary text-lg font-bold flex-1 text-center">중등 수학 교재 가이드</h2>
+        <div class="size-10"></div>
+    </div>
+
+    <article class="max-w-2xl mx-auto p-4 space-y-8">
+
+        <section>
+            <p class="text-sm text-olive-cobalt-dark/80 leading-relaxed">
+                중학교 수학은 초등 수학과 비교해 추상적 개념이 본격적으로 등장합니다. 정수, 방정식, 함수, 기하 증명 등
+                새로운 영역이 추가되면서 많은 학생이 어려움을 겪습니다. 올바른 교재 선택과 학습 전략으로 이 시기를 잘 넘기면
+                고등 수학의 기초가 튼튼해집니다.
+            </p>
+        </section>
+
+        <section class="bg-white rounded-xl border border-olive-cobalt-muted/10 p-5">
+            <h3 class="font-bold text-primary text-[15px] mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-lg">calculate</span>
+                중등 수학 교육과정 핵심 포인트
+            </h3>
+            <div class="text-sm text-olive-cobalt-dark/80 leading-relaxed space-y-3">
+                <p>중학교 수학은 학년별로 다음과 같은 핵심 단원을 학습합니다.</p>
+
+                <div class="bg-emerald-50/50 rounded-lg p-4 space-y-2">
+                    <p><strong>중학교 1학년</strong></p>
+                    <ul class="list-disc pl-5 space-y-1 text-[13px]">
+                        <li>정수와 유리수의 사칙연산</li>
+                        <li>문자와 식 (일차식의 계산)</li>
+                        <li>일차방정식의 풀이와 활용</li>
+                        <li>좌표평면과 그래프</li>
+                        <li>기본 도형과 작도, 합동</li>
+                    </ul>
+                </div>
+
+                <div class="bg-emerald-50/50 rounded-lg p-4 space-y-2">
+                    <p><strong>중학교 2학년</strong></p>
+                    <ul class="list-disc pl-5 space-y-1 text-[13px]">
+                        <li>유리수와 순환소수</li>
+                        <li>식의 계산 (단항식·다항식의 곱셈과 나눗셈)</li>
+                        <li>연립방정식</li>
+                        <li>일차함수와 그래프</li>
+                        <li>삼각형·사각형의 성질, 도형의 닮음</li>
+                        <li>확률</li>
+                    </ul>
+                </div>
+
+                <div class="bg-emerald-50/50 rounded-lg p-4 space-y-2">
+                    <p><strong>중학교 3학년</strong></p>
+                    <ul class="list-disc pl-5 space-y-1 text-[13px]">
+                        <li>제곱근과 실수</li>
+                        <li>인수분해와 이차방정식</li>
+                        <li>이차함수와 그래프</li>
+                        <li>피타고라스 정리</li>
+                        <li>삼각비</li>
+                        <li>원의 성질</li>
+                        <li>통계 (대푯값, 산포도, 상관관계)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-xl border border-olive-cobalt-muted/10 p-5">
+            <h3 class="font-bold text-primary text-[15px] mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-lg">checklist</span>
+                교재 선택 시 주의사항
+            </h3>
+            <div class="text-sm text-olive-cobalt-dark/80 leading-relaxed space-y-3">
+                <div class="flex gap-3">
+                    <span class="text-primary font-bold text-lg leading-none mt-0.5">1</span>
+                    <div>
+                        <p class="font-semibold mb-1">개념서 → 유형서 → 심화서 단계로 선택하세요</p>
+                        <p class="text-[13px]">수학은 단계별 학습이 핵심입니다. 먼저 개념서로 원리를 이해한 후, 유형별 문제집으로 문제 해결 능력을 기르고, 심화 교재로 고난도 문제에 도전하세요. 각 단계를 건너뛰면 실력 향상이 어렵습니다.</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <span class="text-primary font-bold text-lg leading-none mt-0.5">2</span>
+                    <div>
+                        <p class="font-semibold mb-1">개념 설명이 풍부한 교재를 선택하세요</p>
+                        <p class="text-[13px]">중학 수학에서 가장 중요한 것은 '왜 그렇게 되는지'를 이해하는 것입니다. 공식만 나열하는 교재보다 개념의 유도 과정과 원리를 자세히 설명하는 교재가 실력 향상에 유리합니다.</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <span class="text-primary font-bold text-lg leading-none mt-0.5">3</span>
+                    <div>
+                        <p class="font-semibold mb-1">서술형·증명 문제가 포함된 교재를 활용하세요</p>
+                        <p class="text-[13px]">중학교 내신에서 서술형 문제 비중이 30~40%에 달합니다. 풀이 과정을 논리적으로 서술하는 연습이 가능한 교재를 반드시 포함하세요. 특히 기하 영역에서는 증명 문제 연습이 중요합니다.</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <span class="text-primary font-bold text-lg leading-none mt-0.5">4</span>
+                    <div>
+                        <p class="font-semibold mb-1">내신 기출문제집을 활용하세요</p>
+                        <p class="text-[13px]">학교별로 시험 출제 경향이 다르므로, 자기 학교 또는 유사한 수준의 학교 기출문제를 풀어보면 시험 감각을 익힐 수 있습니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-xl border border-olive-cobalt-muted/10 p-5">
+            <h3 class="font-bold text-primary text-[15px] mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-lg">lightbulb</span>
+                추천 학습 전략
+            </h3>
+            <div class="text-sm text-olive-cobalt-dark/80 leading-relaxed space-y-3">
+                <p><strong>개념 노트 만들기</strong>: 단원별로 핵심 개념, 공식, 주의사항을 정리하는 노트를 만드세요. 시험 직전 복습 시 매우 효율적입니다. 공식은 단순 암기보다 유도 과정을 함께 이해하세요.</p>
+                <p><strong>오답 노트 필수</strong>: 틀린 문제를 모아 오답 노트를 작성하세요. 단순히 다시 푸는 것이 아니라, 틀린 이유를 분석하고 같은 유형의 문제를 추가로 풀어 약점을 보완하세요.</p>
+                <p><strong>매일 꾸준한 학습</strong>: 수학은 몰아서 공부하면 효과가 적습니다. 매일 30분~1시간씩 꾸준히 공부하는 것이 벼락치기보다 훨씬 효과적입니다.</p>
+                <p><strong>이전 단원 복습</strong>: 수학은 연결성이 강한 과목입니다. 새 단원을 시작하기 전에 관련된 이전 단원을 복습하면 새로운 개념을 더 쉽게 이해할 수 있습니다. 예를 들어 이차방정식 전에 인수분해를 먼저 복습하세요.</p>
+            </div>
+        </section>
+
+        <div class="p-5 bg-primary/5 rounded-xl border border-primary/10 text-center">
+            <h3 class="font-bold text-primary text-[15px] mb-2">중등 수학 참고서를 찾고 계신가요?</h3>
+            <p class="text-sm text-olive-cobalt-dark/70 mb-4">스쿨북스에서 학년별 수학 참고서를 검색하고 비교해보세요.</p>
+            <a href="/?subject=수학&schoolLevel=중등"
+                class="inline-flex items-center gap-1.5 bg-primary text-white text-sm font-bold px-5 py-2.5 rounded-lg hover:bg-primary/90 transition-colors">
+                <span class="material-symbols-outlined text-lg">search</span>
+                중등 수학 교재 검색하기
+            </a>
+        </div>
+
+        <div class="flex items-center justify-between pt-4">
+            <a href="/guide/middle-korean" class="inline-flex items-center gap-1 text-sm font-semibold text-olive-cobalt-muted hover:text-primary transition-colors">
+                <span class="material-symbols-outlined text-lg">arrow_back</span>
+                중등 국어 가이드
+            </a>
+            <a href="/guide/middle-english" class="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-accent-orange transition-colors">
+                중등 영어 가이드
+                <span class="material-symbols-outlined text-lg">arrow_forward</span>
+            </a>
+        </div>
+
+    </article>
+
+    <footer class="mt-12 px-6 py-4 text-center border-t border-olive-cobalt-muted/10 bg-white/90">
+        <p class="text-[10px] text-olive-cobalt-muted/70 leading-snug">스쿨북스는 참고서 검색 및 비교를 돕는 정보 제공 서비스입니다.</p>
+        <div class="flex items-center justify-center gap-2 mt-1">
+            <p class="text-[9px] text-olive-cobalt-muted/50">&copy; 2026 스쿨북스. All rights reserved.</p>
+            <span class="text-[9px] text-olive-cobalt-muted/30">|</span>
+            <a href="/terms" class="text-[9px] text-olive-cobalt-muted/70 hover:text-primary font-medium underline underline-offset-2">이용약관</a>
+            <span class="text-[9px] text-olive-cobalt-muted/30">|</span>
+            <a href="/privacy" class="text-[9px] text-olive-cobalt-muted/70 hover:text-primary font-medium underline underline-offset-2">개인정보처리방침</a>
+        </div>
+    </footer>
+</body>
+</html>

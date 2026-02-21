@@ -132,4 +132,19 @@ public class PageController {
         model.addAttribute("book", book);
         return "book-detail";
     }
+
+    @GetMapping("/faq")
+    public String faq() {
+        return "faq";
+    }
+
+    @GetMapping("/guide")
+    public String guide() {
+        return "guide/index";
+    }
+
+    @GetMapping("/guide/{slug}")
+    public String guideDetail(@PathVariable("slug") String slug) {
+        return "guide/" + slug;
+    }
 }
